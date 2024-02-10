@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const apiEndpointAi = 'https://lianeapi.onrender.com/@unregistered/api/ai3?key=j86bwkwo-8hako-12C';
+const apiEndpointAi = 'https://lianeapi.onrender.com/@hercai/api/Herc.ai?key=j86bwkwo-8hako-12C';
 
 const introMessage = "🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━";
 const outroMessage = "━━━━━━━━━━━━━━━━";
