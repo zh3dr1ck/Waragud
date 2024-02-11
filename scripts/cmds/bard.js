@@ -7,7 +7,7 @@ module.exports = {
     author: "rehat-- & Aliester Crowley",
     countDown: 10,
     role: 0,
-    longDescription: "Extremely fast Llama 2 70b model by GroqChat with over 200 tokens per second.",
+    longDescription: "google llm",
     category: "ai",
     guide: {
       en: "{pn} <query>"
