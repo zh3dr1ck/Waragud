@@ -7,7 +7,7 @@ module.exports = {
     name: "spamkick",
     aliases: [],
     version: "1.0",
-    author: "Jonell Magallanes & BLUE & kshitiz",
+    author: "Jonell Magallanes & BLUE & kshitiz & coffee",
     countDown: 5,
     role: 2,
     shortDescription: "Automatically detect and act on spam",
