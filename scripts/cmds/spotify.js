@@ -1,5 +1,6 @@
 const axios = require("axios");
 const fs = require('fs');
+const path = require('path');
 
 function formatSize(bytes) {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -54,12 +55,19 @@ module.exports = {
         } = apiResponse.data;
 
         const audioResponse = await axios.get(downloadUrl, { responseType: 'arraybuffer' });
-        fs.writeFileSync(__dirname + '/cache/spotifyAudio.mp3', Buffer.from(audioResponse.data));
+        
+        const cacheDir = path.join(__dirname, 'cmds', 'cache');
+        if (!fs.existsSync(cacheDir)) {
+          fs.mkdirSync(cacheDir, { recursive: true });
+        }
 
-        const fileSize = fs.statSync(__dirname + '/cache/spotifyAudio.mp3').size;
+        const audioFilePath = path.join(cacheDir, 'spotifyAudio.mp3');
+        fs.writeFileSync(audioFilePath, Buffer.from(audioResponse.data));
+
+        const fileSize = fs.statSync(audioFilePath).size;
         const sizeFormatted = formatSize(fileSize);
 
-        const attachment = fs.createReadStream(__dirname + '/cache/spotifyAudio.mp3');
+        const attachment = fs.createReadStream(audioFilePath);
 
         const form = {
           body: `🎧 | Playing: ${title}...`,
