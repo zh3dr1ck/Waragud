@@ -6,7 +6,7 @@ module.exports = {
     version: "1.0",
     author: "Rishad",
     countDown: 20,
-    role: 0,
+    role: 2,
     shortDescription: {
       en: "💳 Credit card generator with expiration"
     },
