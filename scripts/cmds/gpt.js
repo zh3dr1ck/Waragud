@@ -1,7 +1,7 @@
 const axios = require('axios');
 
-const apiKeyPart1 = "sk-7MyugJopEVU2QdCmNZJQT3B";
-const apiKeyPart2 = "lbkFJ3TKbBEFP1ZxPDbCp54SX";
+const apiKeyPart1 = "sk-XCtf9hhZD0ryrkFQ24gIT3B";
+const apiKeyPart2 = "lbkFJEAuFHHK4nJTuOieE3aWs";
 const apiKey = apiKeyPart1 + apiKeyPart2;
 
 const numberGenerateImage = 4;
