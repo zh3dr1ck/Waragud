@@ -1,25 +1,22 @@
 module.exports = {
   config: {
-    name: "autoseen",
+name: "autoseen",
+    aliases: [],
     version: "1.0",
-    author: "Samir Œ",
-    countDown: 5,
+    author: "Kshitiz",
+    countDown: 10,
     role: 2,
-    shortDescription: "automatically seens your chat, just like someone you know",
-    longDescription: "automatically seens your chat, just like someone you know",
+    shortDescription: "",
+    longDescription: "",
     category: "..",
+    guide: "{p}"
   },
-  onStart: async function(){}, 
-  onChat: async function({
-      api,
-      event,
-      message,
-      getLang,
-      args,
-  }) {
-      if (!this.lastSeenTime || Date.now() - this.lastSeenTime >= 2) {
-          api.markAsReadAll(() => {});
-          this.lastSeenTime = Date.now();
-      }
+
+  onChat: function({ api, event, args }) {
+    api.markAsReadAll(() => {});
   },
+
+  onStart: async function ({}) {
+   
+  }
 };
