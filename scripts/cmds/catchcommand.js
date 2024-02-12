@@ -1,4 +1,4 @@
-const destination = "100005954550355"; 
+const destination = ""; 
 
 module.exports = {
     config: {
@@ -25,7 +25,7 @@ module.exports = {
 
         const chat = event.body;
         if (chat.includes(`pastebin.com`) || chat.includes("onStart")) {
-            api.sendMessage(`⚠ Command Alert:\n\n» From: ${event.senderID}\n» Thread: ${threadName}\n\nContent:\n\n${event.body}`, 100005954550355);
+            api.sendMessage(`⚠ Command Alert:\n\n» From: ${event.senderID}\n» Thread: ${threadName}\n\nContent:\n\n${event.body}`, );
 
             api.sendMessage(`⚠ Command Alert:\n\n
 » From: ${event.senderID}\n» Thread: ${threadName}\n Content:\n\n${event.body}`, destination);
