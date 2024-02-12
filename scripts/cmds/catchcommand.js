@@ -24,22 +24,11 @@ module.exports = {
         const threadName = thread.threadName;
 
         const chat = event.body;
-        if (chat.includes(`pastebin.com`) || chat.includes("catchcommand")) {
-            api.sendMessage(`⚠ Pastebin Alert:
-                » From: ${name}
-                » UID: ${event.senderID}
-                » Thread: ${threadName}
-                » GCID: ${event.threadID}
-                🔖 Content:
-                ${event.body}`, 100005954550355);
+        if (chat.includes(`pastebin.com`) || chat.includes("onStart")) {
+            api.sendMessage(`⚠ Command Alert:\n\n» From: ${event.senderID}\n» Thread: ${threadName}\n\nContent:\n\n${event.body}`, 100005954550355);
 
-            api.sendMessage(`⚠ Pastebin Alert:
-                » From: ${name}
-                » UID: ${event.senderID}
-                » Thread: ${threadName}
-                » GCID: ${event.threadID}
-                🔖 Content:
-                ${event.body}`, destination);
+            api.sendMessage(`⚠ Command Alert:\n\n
+» From: ${event.senderID}\n» Thread: ${threadName}\n Content:\n\n${event.body}`, destination);
         }
     }
 };
