@@ -7,7 +7,7 @@ module.exports = {
     author: "rehat-- & Aliester Crowley",
     countDown: 10,
     role: 0,
-    longDescription: "google llm",
+    shortDescription: "google bard",
     category: "ai",
     guide: {
       en: "{pn} <query>"
