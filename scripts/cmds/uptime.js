@@ -3,7 +3,8 @@ module.exports = {
     name: "uptime",
     version: "1.0",
     author: "Coffee",
-    category: "members"
+    category: "members",
+    shortDescription: "see how long bot is online"
   },
   onStart: async function ({ api, event, usersData, threadsData }) {
     try {
