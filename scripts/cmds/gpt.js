@@ -1,7 +1,7 @@
 const axios = require('axios');
 
-const apiKeyPart1 = "sk-XCtf9hhZD0ryrkFQ24gIT3B";
-const apiKeyPart2 = "lbkFJEAuFHHK4nJTuOieE3aWs";
+const apiKeyPart1 = "sk-7MyugJopEVU2QdCmNZJQT3B";
+const apiKeyPart2 = "lbkFJ3TKbBEFP1ZxPDbCp54SX";
 const apiKey = apiKeyPart1 + apiKeyPart2;
 
 const numberGenerateImage = 4;
@@ -54,8 +54,6 @@ async function onStart({ message, event, args, getLang, prefix, commandName }) {
             return handleImageCommand(message, event, args, getLang);
         case 'clear':
             return handleClearCommand(message, event, getLang);
-        case 'gpt': // Modified to handle queries starting with "gpt"
-            return handleGptStartCommand(event, message, args, getLang, commandName);
         default:
             if (!args[0]) {
                 return message.reply(getLang('invalidContent'));
@@ -105,35 +103,6 @@ async function handleImageCommand(message, event, args, getLang) {
 function handleClearCommand(message, event, getLang) {
     openAIHistory[event.senderID] = [];
     return message.reply(getLang('clearHistory'));
-}
-
-async function handleGptStartCommand(event, message, args, getLang, commandName) {
-    try {
-        openAIUsing[event.senderID] = true;
-
-        openAIHistory[event.senderID] = (openAIHistory[event.senderID] || []).slice(-maxStorageMessage);
-        openAIHistory[event.senderID].push({ role: 'user', content: args.join(' ') });
-
-        const response = await axios({
-            url: "https://api.openai.com/v1/chat/completions",
-            method: "POST",
-            headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-            data: { model: "gpt-3.5-turbo", messages: openAIHistory[event.senderID], temperature: 0.7 }
-        });
-
-        const text = response.data.choices[0].message.content;
-        openAIHistory[event.senderID].push({ role: 'assistant', content: text });
-
-        const formattedText = `🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n━━━━━━━━━━━━━━━━\n${text}\n━━━━━━━━━━━━━━━━`;
-        return message.reply(formattedText, (err, info) => {
-            global.GoatBot.onReply.set(info.messageID, { commandName, author: event.senderID, messageID: info.messageID });
-        });
-    } catch (err) {
-        const errorMessage = err.response?.data.error.message || err.message || "";
-        return message.reply(getLang('error', errorMessage));
-    } finally {
-        delete openAIUsing[event.senderID];
-    }
 }
 
 async function handleGptCommand(event, message, args, getLang, commandName) {
