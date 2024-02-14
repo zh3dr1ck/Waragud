@@ -16,7 +16,7 @@ module.exports = {
         author: "NTKhang",
         countDown: 5,
         role: 0,
-        shortDescription: { en: "GPT chat" },
+        shortDescription: { en: "ChatGPT" },
         longDescription: { en: "GPT chat" },
         category: "ai",
         guide: {
