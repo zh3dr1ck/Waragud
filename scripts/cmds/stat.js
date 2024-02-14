@@ -10,6 +10,7 @@ module.exports = {
     author: "JARiF@Cock",
     role: 2,
     category: "owner",
+    shortDescription: "see server stats",
     guide: {
       en: "Use {p}info"
     }
