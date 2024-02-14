@@ -12,8 +12,8 @@ module.exports = {
     author: "Samir Œ | rehat--",
     role: 0,
     countDown: 60,
-    longDescription: {
-      en: "Get Image From Pinterest",
+    shortDescription: {
+      en: "Search Image From Pinterest",
     },
     category: "image",
     guide: {
