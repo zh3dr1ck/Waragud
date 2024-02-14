@@ -11,7 +11,7 @@ module.exports = {
     cooldowns: 5,
     role: 0,
     shortDescription: {
-      en: ""
+      en: "clean cache"
     },
     longDescription: {
       en: "help to clean cache and tmp folder"
