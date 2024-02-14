@@ -10,7 +10,7 @@ module.exports = {
     role: 0,
     category: 'Ai-Chat',
     shortDescription: {
-      en: ''
+      en: 'an Ai girl you can talk to as a friend.'
     },
     longDescription: {
       en: 'a lonesome girl you can talk to when bored.'
