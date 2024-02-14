@@ -10,7 +10,7 @@ module.exports = {
     cooldowns: 5,
     role: 0,
     shortDescription: {
-      en: "remini filter"
+      en: "enhance image"
     },
     longDescription: {
       en: "remini filter"
