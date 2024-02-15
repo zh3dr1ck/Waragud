@@ -50,7 +50,6 @@ module.exports = {
 │ - Clean
 │ - Font
 │ - Help
-│ - Join
 │ - Prefix
 │ - Stat
 │ - Uid
