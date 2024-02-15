@@ -35,6 +35,7 @@ module.exports = {
 │ - Gpt draw
 │ - Pinterest
 │ - Pinterest2
+│ - Prodia
 │ - Remini
 ╰─━━━━━━━━━╾─╯
 ╭─╼━━━━━━━━╾─╮
