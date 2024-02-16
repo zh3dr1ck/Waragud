@@ -54,7 +54,7 @@ const commandInfoMap = {
     description: "Search Google Images online",
     guide: "-gmage cat"
   },
-  "gpt draw": {
+  "gptdraw": {
     name: "gpt draw",
     description: "Draw texts",
     guide: "-gpt draw cat"
@@ -178,7 +178,7 @@ module.exports = {
 │ - AI
 │ - Bard
 │ - Claire
-│ - GPT
+│ - Gpt
 │ - Gemini
 │ - Translate
 ╰─━━━━━━━━━╾─╯
@@ -192,7 +192,7 @@ module.exports = {
 │ - Dalle
 │ - Image
 │ - Gmage
-│ - GPT Draw
+│ - Gpt Draw
 │ - Pinterest
 │ - Pinterest2
 │ - Prodia
