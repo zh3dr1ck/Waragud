@@ -9,6 +9,11 @@ const commandInfoMap = {
     description: "Google Bard",
     guide: "-bard what is life"
   },
+  tempmail: {
+    name: "tempmail",
+    description: "Get Temporary Emails and it's Inbox messages",
+    guide: "-tempmail create and -tempmail inbox <email>"
+  },
   claire: {
     name: "claire",
     description: "an ai based on gpt-4",
@@ -214,6 +219,7 @@ module.exports = {
 │ - Help
 │ - Prefix
 │ - Stat
+│ - Tempmail
 │ - Uid
 │ - Unsend
 │ - Uptime
