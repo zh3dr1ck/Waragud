@@ -9,30 +9,10 @@ const commandInfoMap = {
     description: "Google Bard",
     guide: "-bard what is life"
   },
-ban: {
-    name: "ban",
-    description: "Ban's members from using the bot",
-    guide: "-ban <uid>"
-  },
-kick: {
-    name: "kick",
-    description: "kick's members out of gc",
-    guide: "-kick <uid>\n-kick <@name>"
-  },
 adduser: {
     name: "adduser",
     description: "add users to group chat using their uid or profile link",
     guide: "-adduser <uid>\n-adduser <profile link>"
-  },
-restart: {
-    name: "restart",
-    description: "restart the bot",
-    guide: "-restart"
-  },
-setwelcome: {
-    name: "setwelcome",
-    description: "edit the welcome message kf the bot when new member join the group chat",
-    guide: "-setwelcome text ⊂⁠(⁠´⁠･⁠◡⁠･⁠⊂⁠ ⁠) Hello and welcome {userName}!  to  {boxName}.\nEnjoy your stay! Have a nice {session}!\n\n-setwelcome file <reply to gif>"
   },
   tempmail: {
     name: "tempmail",
@@ -251,8 +231,10 @@ module.exports = {
 │ - Uptime
 ╰─━━━━━━━━━╾─╯
 ╭─╼━━━━━━━━╾─╮
-│  👑 | 𝙾𝚠𝚗𝚎𝚛
+│  👑 | 𝙱𝚘𝚝 𝙾𝚠𝚗𝚎𝚛
 │ - Ban
+│ - Cmd
+│ - Delete
 │ - Kick
 │ - Restart
 │ - Setwelcome 
