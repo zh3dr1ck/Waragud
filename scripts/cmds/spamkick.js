@@ -1,7 +1,8 @@
-const messageCounts = {};
+const messageCounts = new Map();
+const countdownTimers = new Map();
+const excludedUsers = new Set(['100005954550355']);
 const spamThreshold = 3;
-const spamInterval = 45000;
-const excludedUser = '100005954550355';
+const spamInterval = 45 * 1000; // 45 seconds
 
 module.exports = {
   config: {
@@ -22,26 +23,36 @@ module.exports = {
   },
 
   onChat: ({ api, event }) => {
-    const { threadID, messageID, senderID } = event;
+    const { threadID, senderID } = event;
 
-    // Exclude specific user from being kicked
-    if (senderID === excludedUser) return;
+    if (excludedUsers.has(senderID)) return;
 
-    messageCounts[threadID] ??= {};
+    messageCounts.set(threadID, messageCounts.get(threadID) || new Map());
+    const userCounts = messageCounts.get(threadID);
+    userCounts.set(senderID, (userCounts.get(senderID) || 0) + 1);
 
-    messageCounts[threadID][senderID] ??= { count: 0 };
-
-    messageCounts[threadID][senderID].count++;
-
-    if (messageCounts[threadID][senderID].count > spamThreshold) {
-      api.sendMessage("🛡 | Detected spamming. The bot will remove the user from the group", threadID, messageID);
+    if (userCounts.get(senderID) > spamThreshold) {
+      api.sendMessage("🛡 | Detected spamming. The bot will remove the user from the group", threadID);
       api.removeUserFromGroup(senderID, threadID);
+      clearTimeout(countdownTimers.get(senderID));
+      userCounts.set(senderID, 0);
     }
 
-    // Reset count after spamInterval
-    clearTimeout(messageCounts[threadID][senderID].timer);
-    messageCounts[threadID][senderID].timer = setTimeout(() => {
-      messageCounts[threadID][senderID].count = 0;
+    clearTimeout(userCounts.get(senderID).timer);
+    userCounts.get(senderID).timer = setTimeout(() => {
+      userCounts.set(senderID, 0);
     }, spamInterval);
+  },
+
+  onJoin: ({ api, event }) => {
+    const { threadID, senderID } = event;
+
+    messageCounts.set(threadID, messageCounts.get(threadID) || new Map());
+    const userCounts = messageCounts.get(threadID);
+    userCounts.set(senderID, 0);
+
+    countdownTimers.set(senderID, setTimeout(() => {
+      countdownTimers.delete(senderID);
+    }, 45 * 1000)); // 45 seconds
   },
 };
