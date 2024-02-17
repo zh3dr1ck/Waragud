@@ -57,7 +57,7 @@ setwelcome: {
   translate: {
     name: "translate",
     description: "Translate to any languages",
-    guide: "Reply to text you want to translate"
+    guide: "Reply to text you want to translate and type -translate <language>"
   },
   insight: {
     name: "insight",
