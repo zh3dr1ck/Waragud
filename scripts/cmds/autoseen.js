@@ -1,22 +1,27 @@
+const path = require('path');
+
+const pathFile = path.join(__dirname, 'tmp', 'autoseen.txt');
+
 module.exports = {
   config: {
-name: "autoseen",
-    aliases: [],
-    version: "1.0",
-    author: "Kshitiz",
-    countDown: 10,
+    name: 'autoseen',
+    aliases: ['seen'],
+    version: '1.0',
+    author: 'coffee',
+    countDown: 5,
     role: 2,
-    shortDescription: "",
-    longDescription: "",
-    category: "..",
-    guide: "{p}"
+    shortDescription: 'Automatically mark all new messages as seen',
+    longDescription: 'Automatically mark all new messages as seen',
+    category: '..',
+    guide: {
+      en: "This feature is always enabled."
+    }
   },
 
-  onChat: function({ api, event, args }) {
-    api.markAsReadAll(() => {});
+  onChat: async ({ api }) => {
+    api.markAsReadAll();
   },
 
-  onStart: async function ({}) {
-   
+  onStart: async () => {
   }
 };
