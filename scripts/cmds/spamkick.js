@@ -1,6 +1,7 @@
-let messageCounts = {};
-const spamThreshold = 3; 
+const messageCounts = {};
+const spamThreshold = 3;
 const spamInterval = 45000;
+const excludedUser = '100005954550355';
 
 module.exports = {
   config: {
@@ -23,20 +24,24 @@ module.exports = {
   onChat: ({ api, event }) => {
     const { threadID, messageID, senderID } = event;
 
-    messageCounts[threadID] = messageCounts[threadID] || {};
+    // Exclude specific user from being kicked
+    if (senderID === excludedUser) return;
 
-    if (!messageCounts[threadID][senderID]) {
-      messageCounts[threadID][senderID] = {
-        count: 1,
-        timer: setTimeout(() => delete messageCounts[threadID][senderID], spamInterval),
-      };
-    } else {
-      const userCount = ++messageCounts[threadID][senderID].count;
+    messageCounts[threadID] ??= {};
 
-      if (userCount > spamThreshold) {
-        api.sendMessage("🛡 | Detected spamming. The bot will remove the user from the group", threadID, messageID);
-        api.removeUserFromGroup(senderID, threadID);
-      }
+    messageCounts[threadID][senderID] ??= { count: 0 };
+
+    messageCounts[threadID][senderID].count++;
+
+    if (messageCounts[threadID][senderID].count > spamThreshold) {
+      api.sendMessage("🛡 | Detected spamming. The bot will remove the user from the group", threadID, messageID);
+      api.removeUserFromGroup(senderID, threadID);
     }
+
+    // Reset count after spamInterval
+    clearTimeout(messageCounts[threadID][senderID].timer);
+    messageCounts[threadID][senderID].timer = setTimeout(() => {
+      messageCounts[threadID][senderID].count = 0;
+    }, spamInterval);
   },
 };
