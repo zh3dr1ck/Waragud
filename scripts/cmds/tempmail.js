@@ -8,12 +8,12 @@ const apiClient = axios.create({
 module.exports = {
   config: {
     name: "tempmail",
-    version: "1.0",
+    version: "2.0",
     role: 0,
     countdown: 5,
     author: "Rehat86 | @Turtle APIs",
     longDescription: "Create temporary email and check inbox messages",
-    category: "media",
+    category: "members",
   },
 
   onStart: async ({ api, event, args }) => {
