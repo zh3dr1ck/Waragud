@@ -12,7 +12,7 @@ const commandInfoMap = {
   tempmail: {
     name: "tempmail",
     description: "Get Temporary Emails and it's Inbox messages",
-    guide: "-tempmail create and -tempmail inbox <email>"
+    guide: "-tempmail create\n-tempmail inbox <email>"
   },
   claire: {
     name: "claire",
@@ -122,12 +122,12 @@ const commandInfoMap = {
   font: {
     name: "font",
     description: "changes your font text",
-    guide: "-font"
+    guide: "-font list\n-font <font name> <text>"
   },
   help: {
     name: "help",
     description: "View all commands",
-    guide: "-help"
+    guide: "-help\n-help <command name>"
   },
   prefix: {
     name: "prefix",
