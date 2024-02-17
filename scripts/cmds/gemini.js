@@ -32,6 +32,13 @@ module.exports = {
 
   async onStart({ message, event, args }) {
     try {
+      // Check if the command is specifically '-gemini' without any additional arguments
+      if (args.length === 0 || (args.length === 1 && args[0] === '-gemini')) {
+        const answer = `${HEADER}\nHello there! How can I assist you today?\n${FOOTER}`;
+        message.reply({ body: answer });
+        return;
+      }
+
       let shortLink;
 
       if (event.type === "message_reply" && ["photo", "sticker"].includes(event.messageReply?.attachments?.[0]?.type)) {
