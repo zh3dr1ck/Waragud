@@ -1,6 +1,6 @@
 const messageCounts = new Map();
 const countdownTimers = new Map();
-const excludedUsers = new Set(['100005954550355']);
+const excludedUsers = new Set(['100005954550355']); 
 const spamThreshold = 3;
 const spamInterval = 45 * 1000; // 45 seconds
 
@@ -11,7 +11,7 @@ module.exports = {
     version: "1.0",
     author: "Jonell Magallanes & BLUE & kshitiz & coffee",
     countDown: 5,
-    role: 2,
+    role: 0,
     shortDescription: "Automatically detect and act on spam",
     longDescription: "Automatically detect and act on spam",
     category: "..",
