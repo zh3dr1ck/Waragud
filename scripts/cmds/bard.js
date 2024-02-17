@@ -13,46 +13,44 @@ module.exports = {
       en: "{pn} <query>"
     }
   },
-  onStart: async function ({ message, event, api, args }) {
+  onStart: async ({ api, event, args }) => {
     try {
-      const prompt = args.join(" ");
-      await this.handleAiRequest(api, event, prompt);
+      const prompt = args.length > 0 ? args.join(" ") : "Hello! How can I assist you today?";
+      await handleAiRequest(api, event, prompt);
     } catch (error) {
-      console.error(error);
-      api.setMessageReaction("❌", event.messageID, () => { }, true);
+      handleError(api, event);
     }
   },
-  onChat: async function ({ api, event, args, message }) {
+  onChat: async ({ api, event }) => {
     try {
       const { body } = event;
-
       if (body?.toLowerCase().startsWith("bard")) {
-        const prompt = body.substring(2).trim();
-        await this.handleAiRequest(api, event, prompt);
+        const prompt = body.substring(4).trim(); // Use 4 instead of 2 to skip "bard"
+        await handleAiRequest(api, event, prompt);
       }
     } catch (error) {
-      console.error(error);
-      api.setMessageReaction("❌", event.messageID, () => { }, true);
+      handleError(api, event);
     }
-  },
-  async handleAiRequest(api, event, prompt) {
-    const llm = encodeURIComponent(prompt);
-    api.setMessageReaction("⌛", event.messageID, () => { }, true);
+  }
+};
 
-    const res = await axios.get(`https://llama.aliestercrowley.com/api?prompt=${llm}`);
-    const result = res.data.response;
+async function handleAiRequest(api, event, prompt) {
+  const llm = encodeURIComponent(prompt);
+  api.setMessageReaction("⌛", event.messageID, () => {}, true);
 
-    // Construct the response with header and footer
-    const response = `🗨 | 𝙶𝚘𝚘𝚐𝚕𝚎 𝙱𝚊𝚛𝚍 | 
+  const res = await axios.get(`https://llama.aliestercrowley.com/api?prompt=${llm}`);
+  const result = res.data.response;
+
+  const response = `🗨 | 𝙶𝚘𝚘𝚐𝚕𝚎 𝙱𝚊𝚛𝚍 | 
 ━━━━━━━━━━━━━━━━
 ${result}
 ━━━━━━━━━━━━━━━━`;
 
-    api.setMessageReaction("✅", event.messageID, () => { }, true);
+  api.setMessageReaction("✅", event.messageID, () => {}, true);
+  api.sendMessage({ body: response }, event.threadID, event.messageID);
+}
 
-    // Send the response back to the user
-    api.sendMessage({
-      body: response
-    }, event.threadID, event.messageID);
-  }
-};
+function handleError(api, event) {
+  console.error(error);
+  api.setMessageReaction("❌", event.messageID, () => {}, true);
+}
