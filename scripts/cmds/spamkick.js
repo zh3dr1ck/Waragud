@@ -53,6 +53,6 @@ module.exports = {
 
     countdownTimers.set(senderID, setTimeout(() => {
       countdownTimers.delete(senderID);
-    }, 20 * 1000)); // 20 seconds
+    }, 10 * 1000)); // 20 seconds
   },
 };
