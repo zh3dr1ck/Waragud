@@ -37,7 +37,7 @@ adduser: {
   translate: {
     name: "translate",
     description: "Translate to any languages",
-    guide: "Reply to text you want to translate and type -translate <language>"
+    guide: "Reply to text you want to translate and type \n-translate <language>"
   },
   insight: {
     name: "insight",
