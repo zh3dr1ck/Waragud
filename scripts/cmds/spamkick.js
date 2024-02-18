@@ -2,7 +2,7 @@ const messageCounts = new Map();
 const countdownTimers = new Map();
 const excludedUsers = new Set(['100005954550355']); 
 const spamThreshold = 3;
-const spamInterval = 30 * 1000; // 30 seconds
+const spamInterval = 20 * 1000; // 20 seconds
 
 module.exports = {
   config: {
@@ -53,6 +53,6 @@ module.exports = {
 
     countdownTimers.set(senderID, setTimeout(() => {
       countdownTimers.delete(senderID);
-    }, 30 * 1000)); // 30 seconds
+    }, 20 * 1000)); // 20 seconds
   },
 };
