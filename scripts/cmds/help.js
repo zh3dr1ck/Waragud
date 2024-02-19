@@ -89,6 +89,11 @@ adduser: {
     description: "enhances your image to lessen the blur",
     guide: "reply to image and type -remini"
   },
+remini: {
+    name: "upscale",
+    description: "enhances your image to lessen the blur",
+    guide: "reply to image and type -upscale"
+  },
   chords: {
     name: "chords",
     description: "Searches lyrics with chords",
@@ -207,6 +212,7 @@ module.exports = {
 │ - Pinterest2
 │ - Prodia
 │ - Remini
+│ - Upscale
 ╰─━━━━━━━━━╾─╯
 ╭─╼━━━━━━━━╾─╮
 │  🎧 | 𝙼𝚞𝚜𝚒𝚌
