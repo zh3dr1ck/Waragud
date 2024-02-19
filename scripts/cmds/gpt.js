@@ -16,26 +16,26 @@ module.exports = {
         author: "NTKhang",
         countDown: 5,
         role: 0,
-        shortDescription: { en: "ChatGPT" },
-        longDescription: { en: "GPT chat" },
+        shortDescription: { en: "Engage in conversation or create images" },
+        longDescription: { en: "This AI module allows users to have engaging conversations or generate images based on provided content." },
         category: "ai",
         guide: {
             en: `
-            {pn} <draw> <content> - create image from content
-            {pn} <clear> - clear chat history with gpt
-            {pn} <content> - chat with gpt
+            {pn} <draw> <content> - Create an image based on the provided content.
+            {pn} <clear> - Clear chat history with the AI.
+            {pn} <content> - Engage in conversation with the AI.
             `
         }
     },
     langs: {
         en: {
-            apiKeyEmpty: "Please provide api key for openai at file scripts/cmds/gpt.js",
-            invalidContentDraw: "Please enter the content you want to draw",
-            yourAreUsing: "You are using gpt chat, please wait until the previous request ends",
-            processingRequest: "(⁠◍⁠•⁠ᴗ⁠•⁠◍⁠) I'm drawing atm, please wait.",
-            invalidContent: "Please enter the content you want to chat",
-            error: "An error has occurred\n%1",
-            clearHistory: "Your chat history with gpt has been deleted"
+            apiKeyEmpty: "Please provide an API key for OpenAI in the file scripts/cmds/gpt.js",
+            invalidContentDraw: "Please enter the content you want to draw.",
+            yourAreUsing: "You are already engaged in a conversation. Please wait for the current interaction to finish.",
+            processingRequest: "(⁠◍⁠•⁠ᴗ⁠•⁠◍⁠) I'm currently working on it. Please be patient.",
+            invalidContent: "Please enter the content you want to discuss.",
+            error: "Oops! An error occurred:\n%1",
+            clearHistory: "Your conversation history has been deleted."
         }
     },
     onStart,
