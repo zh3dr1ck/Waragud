@@ -36,8 +36,13 @@ module.exports = {
           break;
 
         case 'create':
-          const { data: { email } } = await apiClient.get('create');
-          if (!email) {
+          const [emailResponse, messagesResponse] = await Promise.all([
+            apiClient.get('create'),
+            apiClient.get('inbox') // Assuming 'inbox' returns the messages for the newly created email
+          ]);
+          const { data: { email } } = emailResponse;
+          const { data: messagesData } = messagesResponse;
+          if (!email || !messagesData) {
             return api.sendMessage("Failed to generate temporary email.", event.threadID, event.messageID);
           }
           api.sendMessage(`📩 Here's your generated temporary email: ${email}`, event.threadID);
