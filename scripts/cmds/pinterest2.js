@@ -30,7 +30,7 @@ module.exports = {
 
       const keySearchs = keySearch.substr(0, keySearch.indexOf('-')).trim();
 
-      const { data } = await axios.get(`https://celestial-dainsleif.onrender.com/pinterest?pinte=${encodeURIComponent(keySearchs)}`);
+      const { data } = await axios.get(`https://celestial-dainsleif-v2.onrender.com/pinterest?pinte=${encodeURIComponent(keySearchs)}`);
 
       if (!Array.isArray(data) || data.length === 0) {
         return api.sendMessage(`📷 | Follow this format:\n-pinterest2 cat -4`, event.threadID, event.messageID);
