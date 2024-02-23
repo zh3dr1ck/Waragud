@@ -84,6 +84,16 @@ adduser: {
     description: "make images through texts",
     guide: "-prodia cat"
   },
+  pxart: {
+    name: "pxart",
+    description: "make images through texts",
+    guide: "-pxart <text> | <number 1-9>\n-pixart cat | 5"
+  },
+  emi: {
+    name: "emi",
+    description: "make images through texts",
+    guide: "-emi cat"
+  },
   remini: {
     name: "remini",
     description: "enhances your image to lessen the blur",
@@ -205,12 +215,14 @@ module.exports = {
 ╭─╼━━━━━━━━╾─╮
 │  🖼 | 𝙸𝚖𝚊𝚐𝚎
 │ - Dalle
+│ - Emi
 │ - Image
 │ - Gmage
 │ - Gpt Draw
 │ - Pinterest
 │ - Pinterest2
 │ - Prodia
+│ - Pxart
 │ - Remini
 │ - Upscale
 ╰─━━━━━━━━━╾─╯
