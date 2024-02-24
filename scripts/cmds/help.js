@@ -4,6 +4,11 @@ const commandInfoMap = {
     description: "Ai Based on GPT-4",
     guide: "-ai what is life?"
   },
+  perplexity: {
+    name: "perplexity",
+    description: "Perplexity AI: Fine-tuned for Google search.",
+    guide: "-perplexity what is life?"
+  },
   bard: {
     name: "bard",
     description: "Google Bard",
@@ -206,6 +211,7 @@ module.exports = {
 │ - Gpt
 │ - Gemini
 │ - Translate
+│ - Perplexity
 ╰─━━━━━━━━━╾─╯
 ╭─╼━━━━━━━━╾─╮
 │  🗨 | 𝙰𝚒 - 𝙲𝚑𝚊𝚝
