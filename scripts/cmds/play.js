@@ -24,7 +24,7 @@ module.exports = {
     },
   },
 
-  onStart: async function ({ api, event, args, message }) {
+  onStart: async function ({ api, event, args }) {
     try {
       const songName = args.join(" ");
 
@@ -33,11 +33,6 @@ module.exports = {
       }
 
       const searchResults = await yts(songName);
-
-      if (!searchResults.videos.length) {
-        return api.sendMessage("Error: Song not found.", event.threadID, event.messageID);
-      }
-
       const video = searchResults.videos[0];
       const videoUrl = video.url;
       const stream = ytdl(videoUrl, { filter: "audioonly" });
@@ -46,23 +41,17 @@ module.exports = {
 
       stream.pipe(fs.createWriteStream(filePath));
 
-      stream.on('response', () => {
-        console.info('[DOWNLOADER]', 'Starting download now!');
-      });
-
-      stream.on('info', (info) => {
-        console.info('[DOWNLOADER]', `Downloading ${info.videoDetails.title} by ${info.videoDetails.author.name}`);
-      });
-
       stream.on('end', async () => {
-        console.info('[DOWNLOADER] Downloaded');
-
-        if (fs.statSync(filePath).size > FILE_SIZE_LIMIT_MB * 1024 * 1024) {
-          fs.unlinkSync(filePath);
-          return api.sendMessage(`[ERR] The file could not be sent because it is larger than ${FILE_SIZE_LIMIT_MB}MB.`, event.threadID, event.messageID);
+        if (await isFileSizeWithinLimit(filePath)) {
+          await handleLyrics(api, event, video, filePath, songName);
+        } else {
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error('[ERROR]', 'Failed to delete file:', err);
+            }
+            api.sendMessage(`[ERR] The file could not be sent because it is larger than ${FILE_SIZE_LIMIT_MB}MB.`, event.threadID, event.messageID);
+          });
         }
-
-        await handleLyrics(api, event, video, filePath, songName);
       });
     } catch (error) {
       console.error('[ERROR]', error);
@@ -78,20 +67,33 @@ async function handleLyrics(api, event, video, filePath, songName) {
     const response = await axios.get(apiUrl);
     const { lyrics, title, artist } = response.data;
 
-    if (!lyrics) {
-      return api.sendMessage(`🎧 | Title: ${video.title}\n🎤 | Artist: ${video.author.name}\n\nSorry, lyrics not found!`, event.threadID, event.messageID);
-    } else {
-      const formattedMessage = `🎧 | Title: ${video.title}\n🎤 | Artist: ${video.author.name}\n\n${lyrics}`;
-      const replyMessage = {
-        body: formattedMessage,
-        attachment: fs.createReadStream(filePath),
-      };
-      await api.sendMessage(replyMessage, event.threadID, () => {
-        fs.unlinkSync(filePath);
-      });
-    }
+    const lyricsWithTitle = `🎧 | Title: ${title}\n🎤 | Artist: ${artist}\n\n${lyrics || "Sorry, lyrics not found!"}`;
+
+    const sendLyricsPromise = api.sendMessage(lyricsWithTitle, event.threadID);
+    const sendSongPromise = api.sendMessage({
+      body: "Now playing:",
+      attachment: fs.createReadStream(filePath),
+    }, event.threadID);
+
+    await Promise.all([sendLyricsPromise, sendSongPromise]);
+
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error('[ERROR]', 'Failed to delete file:', err);
+      }
+    });
   } catch (error) {
-    console.error(error);
-    api.sendMessage(`Error getting lyrics for "${songName}"!`, event.threadID, event.messageID);
+    console.error('[ERROR]', error);
+    api.sendMessage(`Error getting lyrics for "${songName}"!`, event.threadID);
+  }
+}
+
+async function isFileSizeWithinLimit(filePath) {
+  try {
+    const stats = await fs.stat(filePath);
+    return stats.size <= FILE_SIZE_LIMIT_MB * 1024 * 1024;
+  } catch (error) {
+    console.error('[ERROR]', 'Failed to get file stats:', error);
+    return false;
   }
 }
