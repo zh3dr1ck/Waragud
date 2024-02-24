@@ -4,6 +4,11 @@ const commandInfoMap = {
     description: "Ai Based on GPT-4",
     guide: "-ai what is life?"
   },
+  blackbox: {
+    name: "blackbox",
+    description: "BlackBox Ai that you can ask for anything.",
+    guide: "-blackbox what is life?"
+  },
   perplexity: {
     name: "perplexity",
     description: "Perplexity AI: Fine-tuned for Google search.",
@@ -207,6 +212,7 @@ module.exports = {
 │  📖 | 𝙴𝚍𝚞𝚌𝚊𝚝𝚒𝚘𝚗
 │ - AI
 │ - Bard
+│ - Blackbox
 │ - Claire
 │ - Gpt
 │ - Gemini
