@@ -29,7 +29,7 @@ module.exports = {
       const loadingMessage = await api.sendMessage("🕰 | 𝚙𝚕𝚎𝚊𝚜𝚎 𝚠𝚊𝚒𝚝 ⊂⁠(⁠´⁠･⁠◡⁠･⁠⊂⁠ ⁠)\n𝚘𝚙𝚖 𝚜𝚘𝚗𝚐 𝚒𝚜 𝚕𝚘𝚊𝚍𝚒𝚗𝚐...", event.threadID, null, event.messageID);
 
       const apiKey = "AIzaSyAO1tuGus4-S8RJID51f8WJAM7LXz1tVNc";
-      const playlistId = "PL5D7fjEEs5yey-zZ1CnOfsyp4SvM7-SIX&si=oJsU9gpmdssTuQ-C,PLWEEt0QgQFInR8b2_sKk86VAGhLs_Iczf&si=KHZOQMcAJac-QcqE";
+      const playlistId = ["PL5D7fjEEs5yey-zZ1CnOfsyp4SvM7-SIX&si=oJsU9gpmdssTuQ-C","PLWEEt0QgQFInR8b2_sKk86VAGhLs_Iczf&si=KHZOQMcAJac-QcqE"];
 
       const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?key=${apiKey}&playlistId=${playlistId}&part=contentDetails&maxResults=50`;
       const response = await axios.get(playlistUrl);
