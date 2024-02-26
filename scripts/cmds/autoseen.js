@@ -9,7 +9,7 @@ module.exports = {
     version: '1.0',
     author: 'coffee',
     countDown: 5,
-    role: 2,
+    role: 0,
     shortDescription: 'Automatically mark all new messages as seen',
     longDescription: 'Automatically mark all new messages as seen',
     category: '..',
