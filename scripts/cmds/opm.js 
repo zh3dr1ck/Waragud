@@ -72,7 +72,7 @@ module.exports = {
       const foundVideo = searchResults.videos[0];
       const videoUrl = foundVideo.url;
 
-      const stream = ytdl(videoUrl, { filter: "audioonly" });
+      const stream = ytdl(videoUrl, { filter: "audioonly", quality: "lowestaudio" });
       const fileName = `${senderID}.mp3`;
       const filePath = __dirname + `/cache/${fileName}`;
 
