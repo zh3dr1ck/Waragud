@@ -4,6 +4,11 @@ const commandInfoMap = {
     description: "Ai Based on GPT-4",
     guide: "-ai what is life?"
   },
+  opm: {
+    name: "opm",
+    description: "sends random opm (original pilipino music)",
+    guide: "-opm"
+  },
   blackbox: {
     name: "blackbox",
     description: "BlackBox Ai that you can ask for anything.",
@@ -242,6 +247,7 @@ module.exports = {
 │  🎧 | 𝙼𝚞𝚜𝚒𝚌
 │ - Chords 
 │ - Lyrics
+│ - Opm
 │ - Play
 │ - Song
 │ - Spotify
