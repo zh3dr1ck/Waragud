@@ -3,7 +3,13 @@ const fs = require('fs');
 const path = require('path');
 
 let url = "https://ai-tools.replit.app";
-let f = path.join(__dirname, 'cache', 'pixart.png');
+let cacheDir = path.join(__dirname, 'cache');
+let f = path.join(cacheDir, 'pixart.png');
+
+// Ensure cache directory exists
+if (!fs.existsSync(cacheDir)) {
+    fs.mkdirSync(cacheDir, { recursive: true });
+}
 
 module.exports = {
   config: {
