@@ -1,135 +1,101 @@
 const axios = require('axios');
+const fs = require('fs-extra');
+const path = require('path');
 
-const apiKeyPart1 = "sk-XCtf9hhZD0ryrkFQ24gIT3B";
-const apiKeyPart2 = "lbkFJEAuFHHK4nJTuOieE3aWs";
-const apiKey = apiKeyPart1 + apiKeyPart2;
-
-const numberGenerateImage = 4;
-const maxStorageMessage = 4;
-
-const { openAIUsing = {}, openAIHistory = {} } = global.temp;
-
-module.exports = {
-    config: {
-        name: "gpt",
-        version: "1.3",
-        author: "NTKhang",
-        countDown: 5,
-        role: 0,
-        shortDescription: { en: "Engage in conversation or create images" },
-        longDescription: { en: "This AI module allows users to have engaging conversations or generate images based on provided content." },
-        category: "ai",
-        guide: {
-            en: `
-            {pn} <draw> <content> - Create an image based on the provided content.
-            {pn} <clear> - Clear chat history with the AI.
-            {pn} <content> - Engage in conversation with the AI.
-            `
-        }
-    },
-    langs: {
-        en: {
-            apiKeyEmpty: "Please provide an API key for OpenAI in the file scripts/cmds/gpt.js",
-            invalidContentDraw: "Please enter the content you want to draw.",
-            yourAreUsing: "You are already engaged in a conversation. Please wait for the current interaction to finish.",
-            processingRequest: "(⁠◍⁠•⁠ᴗ⁠•⁠◍⁠) I'm currently working on it. Please be patient.",
-            invalidContent: "Please enter the content you want to discuss.",
-            error: "Oops! An error occurred:\n%1",
-            clearHistory: "Your conversation history has been deleted."
-        }
-    },
-    onStart,
-    onReply
+const a = {
+  name: "gpt",
+  version: "2.0",
+  author: "kshitiz",
+  longDescription: "Chat with GPT-4",
+  category: "ai",
+  guide: {
+    en: "{p}gpt {prompt}"
+  }
 };
 
-async function onStart({ message, event, args, getLang, prefix, commandName }) {
-    if (!apiKey) {
-        return message.reply(getLang('apiKeyEmpty', prefix));
-    }
+const badWords = ["nsfw","gay", "pussy", "dick","nude"," without","clothes","sugar","fuck","fucked","slut","🤭","🍼","shit","bitch","hentai","🥵","clothes","sugar","smut","naked","penis","🍑","👄","💋","bitch","hentai","sex","😋","boobs","🤤","undressed", "nude","😛","bra","dick","arse","asshole","ass","crack","fellatio","blow job","suck","hot","bikini","👙","💦","🍆","👌","🖕","😝","😜","🤪","🥴","🥺","cock","vagina","pedo","lips","69","yuck","gae","milf","prostitute","without clothe","cock","porn","pervert","seduce","seduction","panty","underwear","undergarment","hentai","ahegao"]; // Add appropriate NSFW words to this array
 
-    switch (args[0]) {
-        case 'img':
-        case 'image':
-        case 'draw':
-            return handleImageCommand(message, event, args, getLang);
-        case 'clear':
-            return handleClearCommand(message, event, getLang);
-        default:
-            if (!args[0]) {
-                return message.reply(getLang('invalidContent'));
-            }
-            return handleGptCommand(event, message, args, getLang, commandName);
-    }
+async function b(c, d, e, f) {
+  try {
+    const g = await axios.get(`https://ai-tools.replit.app/gpt?prompt=${encodeURIComponent(c)}&uid=${d}`);
+    return g.data.gpt4;
+  } catch (h) {
+    throw h;
+  }
 }
 
-async function onReply({ Reply, message, event, args, getLang, commandName }) {
-    if (Reply.author === event.senderID) {
-        handleGptCommand(event, message, args, getLang, commandName);
-    }
+async function i(c) {
+  try {
+    const j = await axios.get(`https://ai-tools.replit.app/sdxl?prompt=${encodeURIComponent(c)}&styles=7`, { responseType: 'arraybuffer' });
+    return j.data;
+  } catch (k) {
+    throw k;
+  }
 }
 
-async function handleImageCommand(message, event, args, getLang) {
-    if (!args[1] || openAIUsing[event.senderID]) {
-        return message.reply(getLang(args[1] ? 'yourAreUsing' : 'invalidContentDraw'));
-    }
-    openAIUsing[event.senderID] = true;
+async function l({ message, event, args, api }) {
+  try {
+    const m = event.senderID;
+    const n = args.join(" ").trim();
+    const o = args[0].toLowerCase() === "draw";
 
-    let sending;
-    try {
-        sending = await message.reply(getLang('processingRequest'));
-        const responseImage = await axios({
-            url: "https://api.openai.com/v1/images/generations",
-            method: "POST",
-            headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-            data: { prompt: args.slice(1).join(' '), n: numberGenerateImage, size: '1024x1024' }
+    if (!n) {
+      return message.reply("Please provide a prompt.");
+    }
+
+    // Check for NSFW content
+    if (containsBadWords(n)) {
+      return message.reply('(⁠‘⁠◉⁠⌓⁠◉⁠’⁠) | No pervert allowed.');
+    }
+
+    if (o) {
+      await p(message, n);
+    } else {
+      const q = await b(n, m);
+      message.reply(`🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n━━━━━━━━━━━━━━━━\n${q}\n━━━━━━━━━━━━━━━━`, (r, s) => {
+        global.GoatBot.onReply.set(s.messageID, {
+          commandName: a.name,
+          uid: m 
         });
-
-        const images = await Promise.all(responseImage.data.data.map(async (item) => {
-            const image = await axios.get(item.url, { responseType: 'stream' });
-            image.data.path = `${Date.now()}.png`;
-            return image.data;
-        }));
-
-        return message.reply({ attachment: images });
-    } catch (err) {
-        const errorMessage = err.response?.data.error.message || err.message;
-        return message.reply(getLang('error', errorMessage || ''));
-    } finally {
-        delete openAIUsing[event.senderID];
-        message.unsend((await sending).messageID);
+      });
     }
+  } catch (t) {
+    console.error("Error:", t.message);
+    message.reply("An error occurred while processing the request.");
+  }
 }
 
-function handleClearCommand(message, event, getLang) {
-    openAIHistory[event.senderID] = [];
-    return message.reply(getLang('clearHistory'));
+async function p(message, prompt) {
+  try {
+    const u = await i(prompt);
+
+    const v = path.join(__dirname, 'cache', `image_${Date.now()}.png`);
+    fs.writeFileSync(v, u);
+
+    message.reply({
+      body: "Generated image:",
+      attachment: fs.createReadStream(v)
+    }, () => {
+      return `━━━━━━━━━━━━━━━━`;
+    });
+  } catch (w) {
+    console.error("Error:", w.message);
+    message.reply("An error occurred while processing the request.");
+  }
 }
 
-async function handleGptCommand(event, message, args, getLang, commandName) {
-    try {
-        openAIUsing[event.senderID] = true;
+module.exports = {
+  config: a,
+  handleCommand: l,
+  onStart: function ({ event, message, args, api }) {
+    return l({ message, event, args, api });
+  },
+  onReply: function ({ message, event, args, api }) {
+    return l({ message, event, args, api });
+  }
+};
 
-        openAIHistory[event.senderID] = (openAIHistory[event.senderID] || []).slice(-maxStorageMessage);
-        openAIHistory[event.senderID].push({ role: 'user', content: args.join(' ') });
-
-        const response = await axios({
-            url: "https://api.openai.com/v1/chat/completions",
-            method: "POST",
-            headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-            data: { model: "gpt-3.5-turbo", messages: openAIHistory[event.senderID], temperature: 0.7 }
-        });
-
-        const text = response.data.choices[0].message.content;
-        openAIHistory[event.senderID].push({ role: 'assistant', content: text });
-
-        const formattedText = `🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n━━━━━━━━━━━━━━━━\n${text}\n━━━━━━━━━━━━━━━━`;
-        return message.reply(formattedText, (err, info) => {
-            global.GoatBot.onReply.set(info.messageID, { commandName, author: event.senderID, messageID: info.messageID });
-        });
-    } catch (err) {
-        const errorMessage = err.response?.data.error.message || err.message || "";
-        return message.reply(getLang('error', errorMessage));
-    } finally {
-        delete openAIUsing[event.senderID];
-    }
+function containsBadWords(prompt) {
+  const promptLower = prompt.toLowerCase();
+  return badWords.some(badWord => promptLower.includes(badWord));
 }
