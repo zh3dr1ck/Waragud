@@ -56,7 +56,7 @@ module.exports = {
 
         const audioResponse = await axios.get(downloadUrl, { responseType: 'arraybuffer' });
         
-        const cacheDir = path.join(__dirname, 'cmds', 'cache');
+        const cacheDir = path.join(__dirname, 'cmds', 'tmp');
         if (!fs.existsSync(cacheDir)) {
           fs.mkdirSync(cacheDir, { recursive: true });
         }
