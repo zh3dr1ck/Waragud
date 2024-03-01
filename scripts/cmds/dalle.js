@@ -6,6 +6,8 @@ const _U = "1z29WfVE58SMtcc32aIaOYN-x8WVWSvuVWOyyNRgEcdaFvAhBsqEfDl-0dBiWTnGyjvu
 
 const badWords = ["nsfw","gay", "pussy", "dick","nude"," without","clothes","sugar","fuck","fucked","slut","🤭","🍼","shit","bitch","hentai","🥵","clothes","sugar","smut","naked","penis","🍑","👄","💋","bitch","hentai","?","sex","😋","boobs","🤤","undressed", "nude","😛","bra","dick","arse","asshole","ass","crack","fellatio","blow job","suck","hot","bikini","👙","💦","🍆","👌","🖕","😝","😜","🤪","🥴","🥺","cock","vagina","pedo","lips","69","yuck","gae","milf","prostitute","without clothe","cock","porn","pervert","seduce","seduction","panty","underwear","undergarment","hentai","ahegao"]; // Add appropriate NSFW words to this array
 
+let dailyUsageCounter = {};
+
 module.exports = {
   config: {
     name: "dalle",
@@ -49,6 +51,14 @@ module.exports = {
       return;
     }
 
+    // Check daily usage limit
+    const today = new Date().toLocaleDateString();
+    dailyUsageCounter[today] = dailyUsageCounter[today] || 0;
+    if (dailyUsageCounter[today] >= 10) {
+      api.sendMessage("Daily usage limit reached. Please wait until tomorrow to use the command again.", event.threadID, event.messageID);
+      return;
+    }
+
     try {
       const res = await axios.get(`https://api-dalle-gen.onrender.com/dalle3?auth_cookie_U=${_U}&auth_cookie_KievRPSSecAuth=${KievRPSSecAuth}&prompt=${encodeURIComponent(keySearchs)}`);
       const data = res.data.results.images;
@@ -61,7 +71,7 @@ module.exports = {
       const imgData = [];
       for (let i = 0; i < Math.min(numberSearch, data.length); i++) {
         const imgResponse = await axios.get(data[i].url, { responseType: 'arraybuffer' });
-        const imgPath = path.join(__dirname, 'cache', `${i + 1}.jpg`);
+        const imgPath = path.join(__dirname, 'tmp', `${i + 1}.jpg`);
         await fs.outputFile(imgPath, imgResponse.data);
         imgData.push(fs.createReadStream(imgPath));
       }
@@ -71,11 +81,13 @@ module.exports = {
         body: `Here's your generated image`
       }, event.threadID, event.messageID);
 
+      // Increment daily usage counter
+      dailyUsageCounter[today]++;
     } catch (error) {
       console.error(error);
       api.sendMessage("cookie of the command. Is expired", event.threadID, event.messageID);
     } finally {
-      await fs.remove(path.join(__dirname, 'cache'));
+      await fs.remove(path.join(__dirname, 'tmp'));
     }
   }
 };
