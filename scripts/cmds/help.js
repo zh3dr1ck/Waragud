@@ -4,6 +4,11 @@ const commandInfoMap = {
     description: "Ai Based on GPT-4",
     guide: "-ai what is life?"
   },
+  join: {
+    name: "join",
+    description: "Join existing group chats where the bot is in.",
+    guide: "-join"
+  },
   opm: {
     name: "opm",
     description: "sends random opm (original pilipino music)",
@@ -104,10 +109,10 @@ adduser: {
     description: "make images through texts",
     guide: "-pxart <text> | <number 1-9>\n-pixart cat | 5"
   },
-  emi: {
-    name: "emi",
-    description: "make images through texts",
-    guide: "-emi cat"
+  imagine: {
+    name: "imagine",
+    description: "make animated images through your imagination",
+    guide: "-imagine cat with dinosaur's body"
   },
   remini: {
     name: "remini",
@@ -232,8 +237,8 @@ module.exports = {
 ╭─╼━━━━━━━━╾─╮
 │  🖼 | 𝙸𝚖𝚊𝚐𝚎
 │ - Dalle
-│ - Emi
 │ - Image
+│ - Imagine
 │ - Gmage
 │ - Gpt Draw
 │ - Pinterest
@@ -259,6 +264,7 @@ module.exports = {
 │ - Clean
 │ - Font
 │ - Help
+│ - Join
 │ - Prefix
 │ - Stat
 │ - Tempmail
@@ -271,13 +277,12 @@ module.exports = {
 │ - Ban
 │ - Cmd
 │ - Delete
-│ - Join
 │ - Kick
 │ - Leave
 │ - Restart 
 ╰─━━━━━━━━━╾─╯
 -𝚑𝚎𝚕𝚙 <𝚌𝚘𝚖𝚖𝚊𝚗𝚍 𝚗𝚊𝚖𝚎>
-𝚃𝚘 𝚜𝚎𝚎 𝙲𝚘𝚖𝚖𝚊𝚗𝚍 𝙸𝚗𝚏𝚘
+𝚃𝚘 𝚜𝚎𝚎 𝚑𝚘𝚠 𝚝𝚘 𝚞𝚜𝚎 𝚝𝚑𝚎 𝚌𝚘𝚖𝚖𝚊𝚗𝚍𝚜
 
 Example: -help bard
 ━━━━━━━━━━━━━━━━`;
