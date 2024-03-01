@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 let url = "https://ai-tools.replit.app";
-let cacheDir = path.join(__dirname, 'cache');
+let cacheDir = path.join(__dirname, 'tmp');
 let f = path.join(cacheDir, 'pixart.png');
 
 // Ensure cache directory exists
