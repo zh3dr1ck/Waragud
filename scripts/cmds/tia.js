@@ -33,7 +33,7 @@ module.exports = {
         throw new Error('Invalid or missing response from the API');
       }
 
-      const responseWithHeaderAndFooter = `━━━━━━━━━━━━━━━━\n${trimmedMessage}\n━━━━━━━━━━━━━━━━`;
+      const responseWithHeaderAndFooter = `(⁠◍⁠•⁠ᴗ⁠•⁠◍⁠)ﾉ⁠♡ ～⊰⁠⊹ฺ\n━━━━━━━━━━━━━━━━\n${trimmedMessage}\n━━━━━━━━━━━━━━━━`;
       await api.sendMessage({ body: responseWithHeaderAndFooter }, event.threadID, event.messageID);
 
       console.log('Responded to the user');
