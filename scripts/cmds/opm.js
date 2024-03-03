@@ -50,7 +50,7 @@ module.exports = {
       const randomVideoId = unwatchedVideoIds[Math.floor(Math.random() * unwatchedVideoIds.length)];
       this.sentMusic.push(randomVideoId);
 
-      const videoDetails = await ytdl.getInfo(randomVideoId, { quality: 'lowest' });
+      const videoDetails = await ytdl.getInfo(randomVideoId, { quality: 'highestaudio' });
       const randomMusicTitle = videoDetails.videoDetails.title;
 
       const searchResults = await yts(randomMusicTitle);
