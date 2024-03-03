@@ -2,7 +2,8 @@ const axios = require("axios");
 const fs = require("fs-extra");
 const os = require("os");
 const yts = require("yt-search");
-const ytdl = require("@distube/ytdl-core");
+const ytdl = require("@neoxr/ytdl-core");
+
 module.exports = {
   sentMusic: [],
 
@@ -18,30 +19,28 @@ module.exports = {
     dependencies: {
       "fs-extra": "",
       "axios": "",
-      "ytdl-core": "",
+      "@neoxr/ytdl-core": "",
       "yt-search": ""
     }
   },
+
   onStart: async function ({ api, event, message }) {
     try {
-      const senderID = event.senderID;
-
-      const loadingMessage = await api.sendMessage("🕰 | 𝚙𝚕𝚎𝚊𝚜𝚎 𝚠𝚊𝚒𝚝 ⊂⁠(⁠´⁠･⁠◡⁠･⁠⊂⁠ ⁠)\n𝚘𝚙𝚖 𝚜𝚘𝚗𝚐 𝚒𝚜 𝚕𝚘𝚊𝚍𝚒𝚗𝚐...", event.threadID, null, event.messageID);
-
+      const loadingMessage = await api.sendMessage("🕰 | Fetching music...", event.threadID, null, event.messageID);
       const apiKey = "AIzaSyAO1tuGus4-S8RJID51f8WJAM7LXz1tVNc";
-      const playlistId = ["PL5D7fjEEs5yey-zZ1CnOfsyp4SvM7-SIX&si=oJsU9gpmdssTuQ-C","PLWEEt0QgQFInR8b2_sKk86VAGhLs_Iczf&si=KHZOQMcAJac-QcqE"];
-
-      const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?key=${apiKey}&playlistId=${playlistId}&part=contentDetails&maxResults=50`;
+      const playlistIds = [
+        "PL5D7fjEEs5yey-zZ1CnOfsyp4SvM7-SIX&si=oJsU9gpmdssTuQ-C",
+        "PLWEEt0QgQFInR8b2_sKk86VAGhLs_Iczf&si=KHZOQMcAJac-QcqE"
+      ];
+      const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?key=${apiKey}&part=contentDetails&maxResults=50&playlistId=${playlistIds.join(',')}`;
       const response = await axios.get(playlistUrl);
-
-      const items = response.data.items;
-      const videoIds = items.map((item) => item.contentDetails.videoId);
+      const videoIds = response.data.items.map(item => item.contentDetails.videoId);
 
       if (this.sentMusic.length === videoIds.length) {
         this.sentMusic = [];
       }
 
-      const unwatchedVideoIds = videoIds.filter((videoId) => !this.sentMusic.includes(videoId));
+      const unwatchedVideoIds = videoIds.filter(videoId => !this.sentMusic.includes(videoId));
 
       if (unwatchedVideoIds.length === 0) {
         api.unsendMessage(loadingMessage.messageID);
@@ -49,46 +48,32 @@ module.exports = {
       }
 
       const randomVideoId = unwatchedVideoIds[Math.floor(Math.random() * unwatchedVideoIds.length)];
-
       this.sentMusic.push(randomVideoId);
 
-      const videoDetailsUrl = `https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&id=${randomVideoId}&part=snippet`;
-      const videoResponse = await axios.get(videoDetailsUrl);
-
-      const videoInfo = videoResponse.data.items[0].snippet;
-
-      const randomMusicTitle = videoInfo.title;
-
-      const cacheFilePath = os.tmpdir() + "/randomMusicTitle.txt";
-      fs.writeFileSync(cacheFilePath, randomMusicTitle);
+      const videoDetails = await ytdl.getInfo(randomVideoId, { quality: 'lowest' });
+      const randomMusicTitle = videoDetails.videoDetails.title;
 
       const searchResults = await yts(randomMusicTitle);
-
       if (!searchResults.videos.length) {
         api.unsendMessage(loadingMessage.messageID);
-        return api.sendMessage("No music track found based  title.", event.threadID, null, event.messageID);
+        return api.sendMessage("No music track found based on title.", event.threadID, null, event.messageID);
       }
 
       const foundVideo = searchResults.videos[0];
       const videoUrl = foundVideo.url;
 
-      const stream = ytdl(videoUrl, { filter: "audioonly", quality: "lowestaudio" });
-      const fileName = `${senderID}.mp3`;
-      const filePath = __dirname + `/tmp/${fileName}`;
+      const stream = ytdl(videoUrl, { filter: "audioonly" });
+      const fileName = `${randomMusicTitle}.mp3`;
+      const filePath = `${os.tmpdir()}/${fileName}`;
 
-      stream.pipe(fs.createWriteStream(filePath));
-
-      stream.on('response', () => {
-        console.info('[DOWNLOADER]', 'Starting download now!');
-      });
-
-      stream.on('info', (info) => {
+      stream.on('info', info => {
         console.info('[DOWNLOADER]', `Downloading music: ${info.videoDetails.title}`);
       });
 
-      stream.on('end', () => {
-        console.info('[DOWNLOADER] Downloaded');
+      stream.pipe(fs.createWriteStream(filePath));
 
+      stream.on('end', async () => {
+        console.info('[DOWNLOADER]', 'Downloaded');
         if (fs.statSync(filePath).size > 26214400) {
           fs.unlinkSync(filePath);
           api.unsendMessage(loadingMessage.messageID);
@@ -96,17 +81,14 @@ module.exports = {
         }
 
         const message = {
-          body: `🎧 | 𝗧𝗶𝘁𝗹𝗲: ${randomMusicTitle}`,
+          body: `🎧 | Title: ${randomMusicTitle}`,
           attachment: fs.createReadStream(filePath)
         };
 
         api.sendMessage(message, event.threadID, null, event.messageID, () => {
           fs.unlinkSync(filePath);
-        });
-
-        setTimeout(() => {
           api.unsendMessage(loadingMessage.messageID);
-        }, 10000);
+        });
       });
     } catch (error) {
       console.error('[ERROR]', error);
