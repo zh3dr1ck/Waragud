@@ -2,7 +2,7 @@ const axios = require('axios');
 
 // Create axios instance with base URL
 const apiClient = axios.create({
-  baseURL: 'https://api-turtle.onrender.com/api/premium/mail/'
+  baseURL: 'https://api-turtle.onrender.com/api/mail/'
 });
 
 module.exports = {
