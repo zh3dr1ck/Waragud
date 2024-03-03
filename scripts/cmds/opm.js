@@ -1,7 +1,6 @@
 const axios = require("axios");
 const fs = require("fs-extra");
 const os = require("os");
-const yts = require("yt-search");
 const ytdl = require("@neoxr/ytdl-core");
 
 module.exports = {
@@ -19,64 +18,50 @@ module.exports = {
     dependencies: {
       "fs-extra": "",
       "axios": "",
-      "@neoxr/ytdl-core": "",
-      "yt-search": ""
+      "@neoxr/ytdl-core": ""
     }
   },
 
   onStart: async function ({ api, event, message }) {
     try {
-      const loadingMessage = await api.sendMessage("🕰 | Fetching music...", event.threadID, null, event.messageID);
       const apiKey = "AIzaSyAO1tuGus4-S8RJID51f8WJAM7LXz1tVNc";
       const playlistIds = [
-        "PL5D7fjEEs5yey-zZ1CnOfsyp4SvM7-SIX&si=oJsU9gpmdssTuQ-C",
-        "PLWEEt0QgQFInR8b2_sKk86VAGhLs_Iczf&si=KHZOQMcAJac-QcqE"
+        "PL3oW2tjiIxvQTMgnXMwbesTc1Z7-ogJi9&si=dgzKqff_ny5lnNYy",
+        "PLdmvwyBhD_YunGWjvZavyHui_uAx78RXV&si=PZ7ZYrdaKEawWEEP"
       ];
-      const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?key=${apiKey}&part=contentDetails&maxResults=50&playlistId=${playlistIds.join(',')}`;
-      const response = await axios.get(playlistUrl);
-      const videoIds = response.data.items.map(item => item.contentDetails.videoId);
 
-      if (this.sentMusic.length === videoIds.length) {
-        this.sentMusic = [];
+      if (this.sentMusic.length === 0) {
+        const playlistUrl = `https://www.googleapis.com/youtube/v3/playlistItems?key=${apiKey}&part=contentDetails&maxResults=50&playlistId=${playlistIds.join(',')}`;
+        const response = await axios.get(playlistUrl);
+        const videoIds = response.data.items.map(item => item.contentDetails.videoId);
+        this.sentMusic = videoIds;
       }
 
-      const unwatchedVideoIds = videoIds.filter(videoId => !this.sentMusic.includes(videoId));
-
-      if (unwatchedVideoIds.length === 0) {
-        api.unsendMessage(loadingMessage.messageID);
-        return api.sendMessage("No unwatched music tracks left.", event.threadID, null, event.messageID);
-      }
-
-      const randomVideoId = unwatchedVideoIds[Math.floor(Math.random() * unwatchedVideoIds.length)];
-      this.sentMusic.push(randomVideoId);
+      const randomVideoId = this.sentMusic.splice(Math.floor(Math.random() * this.sentMusic.length), 1)[0];
 
       const videoDetails = await ytdl.getInfo(randomVideoId, { quality: 'highestaudio' });
       const randomMusicTitle = videoDetails.videoDetails.title;
+      const audioFormat = ytdl.chooseFormat(videoDetails.formats, { quality: 'highestaudio' });
 
-      const searchResults = await yts(randomMusicTitle);
-      if (!searchResults.videos.length) {
-        api.unsendMessage(loadingMessage.messageID);
-        return api.sendMessage("No music track found based on title.", event.threadID, null, event.messageID);
+      if (!audioFormat) {
+        return api.sendMessage("No audio track found for the selected video.", event.threadID, null, event.messageID);
       }
 
-      const foundVideo = searchResults.videos[0];
-      const videoUrl = foundVideo.url;
-
-      const stream = ytdl(videoUrl, { filter: "audioonly" });
+      const stream = ytdl(randomVideoId, { format: audioFormat });
       const fileName = `${randomMusicTitle}.mp3`;
       const filePath = `${os.tmpdir()}/${fileName}`;
 
       stream.on('info', info => {
-        console.info('[DOWNLOADER]', `Downloading music: ${info.videoDetails.title}`);
+        console.info('[DOWNLOADER]', `Downloading music: ${randomMusicTitle}`);
       });
 
-      stream.pipe(fs.createWriteStream(filePath));
+      const fileWriter = fs.createWriteStream(filePath);
+      stream.pipe(fileWriter);
 
-      stream.on('end', async () => {
+      fileWriter.on('finish', async () => {
         console.info('[DOWNLOADER]', 'Downloaded');
         if (fs.statSync(filePath).size > 26214400) {
           fs.unlinkSync(filePath);
-          api.unsendMessage(loadingMessage.messageID);
           return api.sendMessage('🚫 | The file could not be sent because it is larger than 25MB.', event.threadID, null, event.messageID);
         }
 
@@ -87,8 +72,12 @@ module.exports = {
 
         api.sendMessage(message, event.threadID, null, event.messageID, () => {
           fs.unlinkSync(filePath);
-          api.unsendMessage(loadingMessage.messageID);
         });
+      });
+
+      fileWriter.on('error', error => {
+        console.error('[FILE_WRITER_ERROR]', error);
+        api.sendMessage('An error occurred while writing the file.', event.threadID, null, event.messageID);
       });
     } catch (error) {
       console.error('[ERROR]', error);
