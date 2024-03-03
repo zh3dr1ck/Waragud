@@ -11,7 +11,7 @@ module.exports = {
     name: "opm",
     version: "2.0",
     role: 0,
-    author: "𝗞𝘀𝗵𝗶𝘁𝗶𝘇 & 𝗦𝗞𝗬",
+    author: "coffee",
     cooldowns: 40,
     shortDescription: "Fetch a random music song of axix band",
     longDescription: "Fetch a random music song of axix band",
