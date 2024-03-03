@@ -43,7 +43,7 @@ module.exports = {
 
       stream.on('end', async () => {
         if (await isFileSizeWithinLimit(filePath)) {
-          await handleLyrics(api, event, video, filePath, songName);
+          await handleLyrics(api, event, video, filePath, songName, event.messageID); // Pass event.messageID to handleLyrics
         } else {
           fs.unlink(filePath, (err) => {
             if (err) {
@@ -60,7 +60,7 @@ module.exports = {
   },
 };
 
-async function handleLyrics(api, event, video, filePath, songName) {
+async function handleLyrics(api, event, video, filePath, songName, messageID) { // Add messageID parameter
   const apiUrl = `https://lyrist.vercel.app/api/${encodeURIComponent(songName)}`;
 
   try {
@@ -69,7 +69,7 @@ async function handleLyrics(api, event, video, filePath, songName) {
 
     const lyricsWithTitle = `🎧 | Title: ${title}\n🎤 | Artist: ${artist}\n\n${lyrics || "Sorry, lyrics not found!"}`;
 
-    const sendLyricsPromise = api.sendMessage(lyricsWithTitle, event.threadID);
+    const sendLyricsPromise = api.sendMessage(lyricsWithTitle, event.threadID, messageID); // Reply to the message that triggered the request
     const sendSongPromise = api.sendMessage({
       body: "",
       attachment: fs.createReadStream(filePath),
