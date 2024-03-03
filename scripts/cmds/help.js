@@ -44,6 +44,11 @@ adduser: {
     description: "Get Temporary Emails and it's Inbox messages",
     guide: "-tempmail create\n-tempmail inbox <email>"
   },
+  tempmail2: {
+    name: "tempmail2",
+    description: "Get Temporary Emails and it's Inbox messages",
+    guide: "-tempmail2 create\n-tempmail2 inbox <email>"
+  },
   claire: {
     name: "claire",
     description: "an ai based on gpt-4",
@@ -273,6 +278,7 @@ module.exports = {
 │ - Prefix
 │ - Stat
 │ - Tempmail
+│ - Tempmail2
 │ - Uid
 │ - Unsend
 │ - Uptime
