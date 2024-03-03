@@ -35,7 +35,7 @@ module.exports = {
       const searchResults = await yts(songName);
       const video = searchResults.videos[0];
       const videoUrl = video.url;
-      const stream = ytdl(videoUrl, { filter: "audioonly" });
+      const stream = ytdl(videoUrl, { filter: "audioonly", quality: 'lowestaudio' }); // Download lowest audio quality
       const fileName = `music.mp3`;
       const filePath = `${__dirname}/tmp/${fileName}`;
 
