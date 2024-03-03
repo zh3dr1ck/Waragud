@@ -71,7 +71,7 @@ async function handleLyrics(api, event, video, filePath, songName) {
 
     const sendLyricsPromise = api.sendMessage(lyricsWithTitle, event.threadID);
     const sendSongPromise = api.sendMessage({
-      body: "Now playing:",
+      body: "",
       attachment: fs.createReadStream(filePath),
     }, event.threadID);
 
