@@ -39,7 +39,7 @@ module.exports = {
     name: 'ai',
     author: 'coffee',
     role: 0,
-    category: 'ai'
+    category: 'ai',
     shortDescription: { en: "ai to ask anything" }
   },
   onStart: async function ({ api, event, args }) {
