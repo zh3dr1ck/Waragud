@@ -3,11 +3,6 @@ const axios = require('axios');
 module.exports = {
   config: {
     name: "ai",
-    version: "1.0.0",
-    author: "coffee",
-    longDescription: "ai",
-    category: "ai",
-    guide: { en: "{prefix}ai [ask]" },
   },
   onStart: async function ({ api, event, args }) {
     const userId = event.senderID;
