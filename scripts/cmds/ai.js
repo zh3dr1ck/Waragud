@@ -40,7 +40,7 @@ module.exports = {
     author: 'coffee',
     role: 0,
     category: 'ai'
-    shortDescription: 'ai that knows everything',
+    shortDescription: { en: "ai to ask anything" }
   },
   onStart: async function ({ api, event, args }) {
     const input = args.join(' ').trim();
