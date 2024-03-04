@@ -12,20 +12,23 @@ async function fetchFromAI(url, params) {
 
 async function getAIResponse(input, userId) {
   const services = [
-    { url: 'https://openaikey-x20f.onrender.com/api', params: { prompt: input } },
     { url: 'https://ai-tools.replit.app/gpt', params: { prompt: input, uid: userId } },
-    { url: 'http://fi3.bot-hosting.net:20265/api/gpt', params: { question: input } }
+    { url: 'https://openaikey-x20f.onrender.com/api', params: { prompt: input } },
+    { url: 'http://fi3.bot-hosting.net:20265/api/gpt', params: { question: input } },
+    { url: 'https://ai-chat-gpt-4-lite.onrender.com/api/hercai', params: { question: input } }
   ];
 
   let response = "Error: No response from AI services.";
+  let currentIndex = 0;
 
   for (let i = 0; i < services.length; i++) {
-    const service = services[i];
+    const service = services[currentIndex];
     const data = await fetchFromAI(service.url, service.params);
     if (data && (data.gpt4 || data.reply || data.response)) {
       response = data.gpt4 || data.reply || data.response;
       break;
     }
+    currentIndex = (currentIndex + 1) % services.length; // Move to the next service in the cycle
   }
 
   return response;
@@ -35,6 +38,8 @@ module.exports = {
   config: {
     name: 'ai',
     author: 'coffee',
+    role: 0,
+    category: 'ai'
     shortDescription: 'ai that knows everything',
   },
   onStart: async function ({ api, event, args }) {
