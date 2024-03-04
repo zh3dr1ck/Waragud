@@ -1,34 +1,56 @@
 const axios = require('axios');
 
+async function fetchFromAI(url, params) {
+  try {
+    const response = await axios.get(url, { params });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+async function getAIResponse(input, userId) {
+  const services = [
+    { url: 'https://openaikey-x20f.onrender.com/api', params: { prompt: input } },
+    { url: 'https://ai-tools.replit.app/gpt', params: { prompt: input, uid: userId } },
+    { url: 'http://fi3.bot-hosting.net:20265/api/gpt', params: { question: input } }
+  ];
+
+  let response = "Error: No response from AI services.";
+
+  for (let i = 0; i < services.length; i++) {
+    const service = services[i];
+    const data = await fetchFromAI(service.url, service.params);
+    if (data && (data.gpt4 || data.reply || data.response)) {
+      response = data.gpt4 || data.reply || data.response;
+      break;
+    }
+  }
+
+  return response;
+}
+
 module.exports = {
   config: {
-    name: "ai",
+    name: 'ai',
   },
   onStart: async function ({ api, event, args }) {
-    const userId = event.senderID;
-    const content = encodeURIComponent(args.join(" "));
-    const errorMessage = "🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\nAn error occurred while fetching the data.\n━━━━━━━━━━━━━━━━";
+    const input = args.join(' ').trim();
+    if (!input) {
+      api.sendMessage(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\nPlease provide a question or statement.\n━━━━━━━━━━━━━━━━`, event.threadID, event.messageID);
+      return;
+    }
 
-    if (!args[0]) return api.sendMessage("🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\nPlease type a message...\n━━━━━━━━━━━━━━━━", event.threadID, event.messageID);
-
-    try {
-      const [response1, response2] = await Promise.allSettled([
-        axios.get(`http://fi3.bot-hosting.net:20265/api/gpt?question=${content}`),
-        axios.get(`https://ai-tools.replit.app/gpt?prompt=${content}&uid=${encodeURIComponent(userId)}`)
-      ]);
-
-      let replyMessage = "Error: No response from both AI services.";
-
-      if (response2.status === 'fulfilled' && response2.value.data.gpt4) {
-        replyMessage = response2.value.data.gpt4;
-      } else if (response1.status === 'fulfilled' && response1.value.data.reply) {
-        replyMessage = response1.value.data.reply;
-      }
-
-      api.sendMessage(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${replyMessage}\n━━━━━━━━━━━━━━━━`, event.threadID, event.messageID);
-    } catch (error) {
-      console.error(error);
-      api.sendMessage(errorMessage, event.threadID);
+    const response = await getAIResponse(input, event.senderID);
+    api.sendMessage(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, event.threadID);
+  },
+  onChat: async function ({ event, message }) {
+    const messageContent = event.body.trim().toLowerCase();
+    if (messageContent.startsWith("ai")) {
+      const input = messageContent.replace(/^ai\s*/, "").trim();
+      const response = await getAIResponse(input, event.senderID);
+      message.reply(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`);
     }
   }
 };
