@@ -34,6 +34,8 @@ async function getAIResponse(input, userId) {
 module.exports = {
   config: {
     name: 'ai',
+    author: 'coffee',
+    shortDescription: 'ai that knows everything',
   },
   onStart: async function ({ api, event, args }) {
     const input = args.join(' ').trim();
