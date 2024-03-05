@@ -10,7 +10,7 @@ async function fetchFromAI(url, params) {
   }
 }
 
-async function getAIResponse(input, userId) {
+async function getAIResponse(input, userId, messageID) {
   const services = [
     { url: 'https://ai-tools.replit.app/gpt', params: { prompt: input, uid: userId } },
     { url: 'https://openaikey-x20f.onrender.com/api', params: { prompt: input } },
@@ -31,7 +31,7 @@ async function getAIResponse(input, userId) {
     currentIndex = (currentIndex + 1) % services.length; // Move to the next service in the cycle
   }
 
-  return response;
+  return { response, messageID };
 }
 
 module.exports = {
@@ -49,15 +49,15 @@ module.exports = {
       return;
     }
 
-    const response = await getAIResponse(input, event.senderID);
-    api.sendMessage(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, event.threadID);
+    const { response, messageID } = await getAIResponse(input, event.senderID, event.messageID);
+    api.sendMessage(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, event.threadID, messageID);
   },
   onChat: async function ({ event, message }) {
     const messageContent = event.body.trim().toLowerCase();
     if (messageContent.startsWith("ai")) {
       const input = messageContent.replace(/^ai\s*/, "").trim();
-      const response = await getAIResponse(input, event.senderID);
-      message.reply(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`);
+      const { response, messageID } = await getAIResponse(input, event.senderID, message.messageID);
+      message.reply(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, messageID);
     }
   }
 };
