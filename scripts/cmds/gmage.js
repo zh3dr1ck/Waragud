@@ -14,6 +14,10 @@ module.exports = {
 
   onStart: async function ({ api, event, args }) {
     try {
+      if (args.length === 0) {
+        return api.sendMessage('📷 | Follow this format:\n-gmage naruto uzumaki', event.threadID, event.messageID);
+      }
+
       const searchQuery = args.join(' ');
       const apiKey = 'AIzaSyC_gYM4M6Fp1AOYra_K_-USs0SgrFI08V0';
       const searchEngineID = 'e01c6428089ea4702';
@@ -85,11 +89,11 @@ module.exports = {
         // Remove local copies
         imgData.forEach((img) => fs.remove(img.path));
       } else {
-        api.sendMessage('📷 | Follow this format:\n-gmage naruto uzumaki', event.threadID, event.messageID);
+        api.sendMessage('📷 | can\'t get your images atm, do try again later... (⁠｡⁠ŏ⁠﹏⁠ŏ⁠)', event.threadID, event.messageID);
       }
     } catch (error) {
       console.error(error);
-      return api.sendMessage('📷 | Follow this format:\n-gmage naruto uzumaki', event.threadID, event.messageID);
+      return api.sendMessage('📷 | can\'t get your images atm, do try again later... (⁠｡⁠ŏ⁠﹏⁠ŏ⁠)', event.threadID, event.messageID);
     }
   },
 };
