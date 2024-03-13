@@ -6,7 +6,10 @@ const askClaire = async (api, event, message) => {
     try {
         const { data } = await axios.get(`${API_ENDPOINT}?query=${encodeURIComponent(event.body.split(" ").slice(1).join(" "))}`);
         if (data?.message) {
-            const messageId = await api.sendMessage(`${data.message}\n━━━━━━━━━━━━━━━`, event.threadID);
+            // Remove the specified part from the response
+            let modifiedResponse = data.message.replace(/👑 𝗧𝗵𝗮𝗻𝗸 𝗟𝗶𝗮𝗻𝗲 𝗖𝗮𝗴𝗮𝗿𝗮:(.*?)(?=Total Requests)/gs, "");
+            modifiedResponse = modifiedResponse.trim(); // Trim any leading or trailing whitespace
+            const messageId = await api.sendMessage(`${modifiedResponse}\n━━━━━━━━━━━━━━━`, event.threadID);
             console.log('Sent answer as a reply to the user');
         } else {
             throw new Error('Invalid or missing response from API');
@@ -41,7 +44,7 @@ const onChat = async ({ api, event, message }) => {
         const response = `✨ 𝗖𝗹𝗮𝗶𝗿𝗲:\n━━━━━━━━━━━━━━━\nHello! How can I assist you today? If you have any questions or need help with something, feel free to ask.\n━━━━━━━━━━━━━━━`;
         await message.reply(response);
     } else if (startsWithPrefix(event.body)) {
-        await message.reply(`🕰️ | Fetching answers...`, async (err) => !err && await askClaire(api, event, message));
+        await message.reply(`🕰 | Fetching answers...`, async (err) => !err && await askClaire(api, event, message));
     }
 };
 
