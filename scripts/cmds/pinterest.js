@@ -27,9 +27,12 @@ module.exports = {
         throw new Error("Please follow this format:\n-pinterest cat -4");
       }
       let numberSearch = parseInt(keySearch.split("-").pop().trim()) || 1;
-      numberSearch = Math.min(Math.max(numberSearch, 1), 21);
+      numberSearch = Math.min(Math.max(numberSearch, 1), 12); // Adjusted to ensure the range is between 1 and 12
 
       let imgData;
+
+      // Array to keep track of fetched image URLs
+      let fetchedImageUrls = [];
 
       // Attempt to fetch images from the first API
       try {
@@ -39,14 +42,21 @@ module.exports = {
           imgData = await Promise.all(data.slice(0, numberSearch).map(async (item, i) => {
             const imageUrl = item;
 
-            try {
-              const { data: imgBuffer } = await axios.get(imageUrl, { responseType: 'arraybuffer' });
-              const imgPath = path.join(__dirname, 'tmp', `${i + 1}.jpg`);
-              await fs.outputFile(imgPath, imgBuffer);
-              return fs.createReadStream(imgPath);
-            } catch (error) {
-              console.error(error);
-              return null; // Skip problematic image
+            // Check if the image URL has been fetched before
+            if (!fetchedImageUrls.includes(imageUrl)) {
+              fetchedImageUrls.push(imageUrl); // Add the image URL to the fetched list
+
+              try {
+                const { data: imgBuffer } = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+                const imgPath = path.join(__dirname, 'tmp', `${i + 1}.jpg`);
+                await fs.outputFile(imgPath, imgBuffer);
+                return fs.createReadStream(imgPath);
+              } catch (error) {
+                console.error(error);
+                return null; // Skip problematic image
+              }
+            } else {
+              return null; // Skip duplicated image
             }
           }));
         }
@@ -63,14 +73,21 @@ module.exports = {
             imgData = await Promise.all(data.slice(0, numberSearch).map(async (item, i) => {
               const imageUrl = item.image;
 
-              try {
-                const { data: imgBuffer } = await axios.get(imageUrl, { responseType: 'arraybuffer' });
-                const imgPath = path.join(__dirname, 'tmp', `${i + 1}.jpg`);
-                await fs.outputFile(imgPath, imgBuffer);
-                return fs.createReadStream(imgPath);
-              } catch (error) {
-                console.error(error);
-                return null; // Skip problematic image
+              // Check if the image URL has been fetched before
+              if (!fetchedImageUrls.includes(imageUrl)) {
+                fetchedImageUrls.push(imageUrl); // Add the image URL to the fetched list
+
+                try {
+                  const { data: imgBuffer } = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+                  const imgPath = path.join(__dirname, 'tmp', `${i + 1}.jpg`);
+                  await fs.outputFile(imgPath, imgBuffer);
+                  return fs.createReadStream(imgPath);
+                } catch (error) {
+                  console.error(error);
+                  return null; // Skip problematic image
+                }
+              } else {
+                return null; // Skip duplicated image
               }
             }));
           }
