@@ -3,7 +3,17 @@ const commandInfoMap = {
     name: "ai",
     description: "Ai Based on GPT-4",
     guide: "-ai what is life?"
+    },
+  knight: {
+    name: "knight",
+    description: "a medieval knight that has been called upon as an ai you can talk to",
+    guide: "-knight tell me about yourself."
   },
+axis: {
+    name: "axis",
+    description: "an ai you can ask for anything",
+    guide: "-axis what is life?"
+    },
   join: {
     name: "join",
     description: "Join existing group chats where the bot is in.",
@@ -43,11 +53,6 @@ adduser: {
     name: "tempmail",
     description: "Get Temporary Emails and it's Inbox messages",
     guide: "-tempmail create\n-tempmail inbox <email>"
-  },
-  tempmail2: {
-    name: "tempmail2",
-    description: "Get Temporary Emails and it's Inbox messages",
-    guide: "-tempmail2 create\n-tempmail2 inbox <email>"
   },
   claire: {
     name: "claire",
@@ -94,30 +99,15 @@ adduser: {
     description: "Search Google Images online",
     guide: "-gmage cat"
   },
-  "gptdraw": {
-    name: "gpt draw",
-    description: "Draw texts",
-    guide: "-gpt draw cat"
-  },
   pinterest: {
     name: "pinterest",
     description: "Searches Images in Pinterest ",
     guide: "-pinterest cat -10"
   },
-  pinterest2: {
-    name: "pinterest2",
-    description: "Searches Images in Pinterest",
-    guide: "-pinterest2 cat -10"
-  },
   prodia: {
     name: "prodia",
     description: "make images through texts",
     guide: "-prodia cat"
-  },
-  pxart: {
-    name: "pxart",
-    description: "make images through texts",
-    guide: "-pxart <text> | <number 1-9>\n-pixart cat | 5"
   },
   imagine: {
     name: "imagine",
@@ -231,6 +221,7 @@ module.exports = {
 ╭─╼━━━━━━━━╾─╮
 │  📖 | 𝙴𝚍𝚞𝚌𝚊𝚝𝚒𝚘𝚗
 │ - AI
+│ - Axis
 │ - Bard
 │ - Blackbox
 │ - Claire
@@ -242,19 +233,16 @@ module.exports = {
 ╭─╼━━━━━━━━╾─╮
 │  🗨 | 𝙰𝚒 - 𝙲𝚑𝚊𝚝
 │ - Insight  
+│ - Knight
 │ - Tia
 ╰─━━━━━━━━━╾─╯
 ╭─╼━━━━━━━━╾─╮
 │  🖼 | 𝙸𝚖𝚊𝚐𝚎
 │ - Dalle
 │ - Image
-│ - Imagine
 │ - Gmage
-│ - Gpt Draw
 │ - Pinterest
-│ - Pinterest2
 │ - Prodia
-│ - Pxart
 │ - Remini
 │ - Upscale
 ╰─━━━━━━━━━╾─╯
@@ -278,7 +266,6 @@ module.exports = {
 │ - Prefix
 │ - Stat
 │ - Tempmail
-│ - Tempmail2
 │ - Uid
 │ - Unsend
 │ - Uptime
