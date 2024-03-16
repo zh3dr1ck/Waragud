@@ -74,10 +74,10 @@ adduser: {
     description: "Translate to any languages",
     guide: "Reply to text you want to translate and type \n-translate <language>"
   },
-  insight: {
-    name: "insight",
+  poet: {
+    name: "poet",
     description: "A poetic ai persona who shares enlightenment through poems and poetry.",
-    guide: "-insight give me advice"
+    guide: "-poet give me advice"
   },
   tia: {
     name: "tia",
@@ -231,9 +231,9 @@ module.exports = {
 │ - Perplexity
 ╰─━━━━━━━━━╾─╯
 ╭─╼━━━━━━━━╾─╮
-│  🗨 | 𝙰𝚒 - 𝙲𝚑𝚊𝚝
-│ - Insight  
+│  🗨 | 𝙰𝚒 - 𝙲𝚑𝚊𝚝 
 │ - Knight
+│ - Poet
 │ - Tia
 ╰─━━━━━━━━━╾─╯
 ╭─╼━━━━━━━━╾─╮
