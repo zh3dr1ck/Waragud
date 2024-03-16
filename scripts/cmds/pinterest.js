@@ -22,10 +22,12 @@ module.exports = {
   onStart: async function ({ api, event, args, usersData }) {
     try {
       const keySearch = args.join(" ");
+      const keySearchs = keySearch.substr(0, keySearch.indexOf('-')).trim();
+      if (!keySearchs) {
+        throw new Error("Please follow this format:\n-pinterest cat -4");
+      }
       let numberSearch = parseInt(keySearch.split("-").pop().trim()) || 1;
       numberSearch = Math.min(Math.max(numberSearch, 1), 21);
-
-      const keySearchs = keySearch.substr(0, keySearch.indexOf('-')).trim();
 
       let imgData;
 
@@ -92,7 +94,7 @@ module.exports = {
       if (error.message === "No images found.") {
         return api.sendMessage("(⁠ ⁠･ั⁠﹏⁠･ั⁠) can't fetch images, api dead.", event.threadID, event.messageID);
       } else {
-        return api.sendMessage(`📷 | ${error.message}\nFollow this format:\n-pinterest cat -4`, event.threadID, event.messageID);
+        return api.sendMessage(`📷 | ${error.message}`, event.threadID, event.messageID);
       }
     }
   }
