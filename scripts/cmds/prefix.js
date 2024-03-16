@@ -1,4 +1,3 @@
-const fs = require("fs-extra");
 const { utils } = global;
 
 module.exports = {
@@ -10,74 +9,22 @@ module.exports = {
     countDown: 5,
     role: 0,
     shortDescription: "see the bot's prefix",
-    longDescription: "Change the bot's command symbol in your chat box or the entire bot system (admin only)",
+    longDescription: "See the bot's prefix in your chat box.",
     category: "members",
     guide: {
-      en: "   {pn} <new prefix>: change new prefix in your box chat"
-        + "\n   Example:"
-        + "\n    {pn} #"
-        + "\n\n   {pn} <new prefix> -g: change new prefix in system bot (only admin bot)"
-        + "\n   Example:"
-        + "\n    {pn} # -g"
-        + "\n\n   {pn} reset: change prefix in your box chat to default"
+      en: "   {pn} reset: change prefix in your box chat to default"
     }
   },
 
   langs: {
     en: {
       reset: "Your prefix has been reset to default: %1",
-      onlyAdmin: "Only admin can change prefix of system bot",
-      confirmGlobal: "Please react to this message to confirm change prefix of system bot",
-      confirmThisThread: "Please react to this message to confirm change prefix in your box chat",
-      successGlobal: "Changed prefix of system bot to: %1",
-      successThisThread: "Changed prefix in your box chat to: %1",
-      myPrefix: "✨| 𝙷𝚎𝚕𝚕𝚘 𝙵𝚛𝚒𝚎𝚗𝚍 |✨\n𝚃𝚑𝚒𝚜 𝚒𝚜 𝚖𝚢 𝙿𝚛𝚎𝚏𝚒𝚡 [ %2 ]\n\nHere's the commands that you can use:\n\n━━ 📖 | 𝙴𝚍𝚞𝚌𝚊𝚝𝚒𝚘𝚗 ━━\n%2ai <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%2axis <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%2bard <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%2blackbox <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%2claire <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%2gemini <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%2gpt <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%2perplexity <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n\n━━ 🖼 | 𝙸𝚖𝚊𝚐𝚎 ━━\n%2dalle <𝑝𝑟𝑜𝑚𝑝𝑡>\n%2gmage <𝑝𝑟𝑜𝑚𝑝𝑡>\n%2image <𝑝𝑟𝑜𝑚𝑝𝑡>\n%2pinterest <𝑐𝑎𝑡> <-5>\n%2prodia <𝑝𝑟𝑜𝑚𝑝𝑡>\n%2remini <𝑟𝑒𝑝𝑙𝑦 𝑡𝑜 𝑖𝑚𝑎𝑔𝑒>\n\n━━ 📻 | 𝙼𝚞𝚜𝚒𝚌 ━━\n%2chords <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n%2lyrics <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n%2song <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n%2spotify <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n%2play <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n%2opm <𝑠𝑒𝑛𝑑𝑠 𝑟𝑎𝑛𝑑𝑜𝑚 𝑜𝑝𝑚>\n%2video <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n\n━━ 🗨 | 𝙰𝚒 - 𝙲𝚑𝚊𝚝 ━━\n-knight <𝑐ℎ𝑎𝑡>\n-poet <𝑐ℎ𝑎𝑡>\n-tia <𝑐ℎ𝑎𝑡>\n\n𝚁𝚞𝚕𝚎𝚜 𝚝𝚘 𝚏𝚘𝚕𝚕𝚘𝚠 𝚍𝚞𝚛𝚒𝚗𝚐 \n𝚢𝚘𝚞𝚛 𝚜𝚝𝚊𝚢:\n- No adult contents (18+).\n- No spamming chat.\n- No adding bots.\n- No changing the group\n(theme/emoji/name).\n\n★ Chat -𝚓𝚘𝚒𝚗 to join other\nofficial group chats.\n★ Tag or Mention the owner if the bot is dead: 𝙼𝚊𝚛𝚔 𝙹𝚘𝚑𝚗 𝚂𝚘𝚖𝚋𝚛𝚊"
+      myPrefix: "✨| 𝙷𝚎𝚕𝚕𝚘 𝙵𝚛𝚒𝚎𝚗𝚍 |✨\n𝚃𝚑𝚒𝚜 𝚒𝚜 𝚖𝚢 𝙿𝚛𝚎𝚏𝚒𝚡 [ %1 ]\n\nHere's the commands that you can use:\n\n━━ 📖 | 𝙴𝚍𝚞𝚌𝚊𝚝𝚒𝚘𝚗 ━━\n%1ai <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%1axis <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%1bard <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%1blackbox <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%1claire <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%1gemini <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%1gpt <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n%1perplexity <𝑞𝑢𝑒𝑠𝑡𝑖𝑜𝑛>\n\n━━ 🖼 | 𝙸𝚖𝚊𝚐𝚎 ━━\n%1dalle <𝑝𝑟𝑜𝑚𝑝𝑡>\n%1gmage <𝑝𝑟𝑜𝑚𝑝𝑡>\n%1image <𝑝𝑟𝑜𝑚𝑝𝑡>\n%1pinterest <𝑐𝑎𝑡> <-5>\n%1prodia <𝑝𝑟𝑜𝑚𝑝𝑡>\n%1remini <𝑟𝑒𝑝𝑙𝑦 𝑡𝑜 𝑖𝑚𝑎𝑔𝑒>\n\n━━ 📻 | 𝙼𝚞𝚜𝚒𝚌 ━━\n%1chords <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n%1lyrics <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n%1song <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n%1spotify <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n%1play <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n%1opm <𝑠𝑒𝑛𝑑𝑠 𝑟𝑎𝑛𝑑𝑜𝑚 𝑜𝑝𝑚>\n%1video <𝑡𝑖𝑡𝑙𝑒 𝑏𝑦 𝑎𝑟𝑡𝑖𝑠𝑡>\n\n━━ 🗨 | 𝙰𝚒 - 𝙲𝚑𝚊𝚝 ━━\n-knight <𝑐ℎ𝑎𝑡>\n-poet <𝑐ℎ𝑎𝑡>\n-tia <𝑐ℎ𝑎𝑡>\n\n𝚁𝚞𝚕𝚎𝚜 𝚝𝚘 𝚏𝚘𝚕𝚕𝚘𝚠 𝚍𝚞𝚛𝚒𝚗𝚐 \n𝚢𝚘𝚞𝚛 𝚜𝚝𝚊𝚢:\n- No adult contents (18+).\n- No spamming chat.\n- No adding bots.\n- No changing the group\n(theme/emoji/name).\n\n★ Chat -𝚓𝚘𝚒𝚗 to join other\nofficial group chats.\n★ Tag or Mention the owner if the bot is dead: 𝙼𝚊𝚛𝚔 𝙹𝚘𝚑𝚗 𝚂𝚘𝚖𝚋𝚛𝚊"
     }
   },
 
   onStart: async function ({ message, role, args, commandName, event, threadsData, getLang }) {
-    if (!args[0])
-      return message.SyntaxError();
-
-    if (args[0] == 'reset') {
-      await threadsData.set(event.threadID, null, "data.prefix");
-      return message.reply(getLang("reset", global.GoatBot.config.prefix));
-    }
-
-    const newPrefix = args[0];
-    const formSet = {
-      commandName,
-      author: event.senderID,
-      newPrefix
-    };
-
-    if (args[1] === "-g")
-      if (role < 2)
-        return message.reply(getLang("onlyAdmin"));
-      else
-        formSet.setGlobal = true;
-    else
-      formSet.setGlobal = false;
-
-    return message.reply(args[1] === "-g" ? getLang("confirmGlobal") : getLang("confirmThisThread"), (err, info) => {
-      formSet.messageID = info.messageID;
-      global.GoatBot.onReaction.set(info.messageID, formSet);
-    });
-  },
-
-  onReaction: async function ({ message, threadsData, event, Reaction, getLang }) {
-    const { author, newPrefix, setGlobal } = Reaction;
-    if (event.userID !== author)
-      return;
-    if (setGlobal) {
-      global.GoatBot.config.prefix = newPrefix;
-      fs.writeFileSync(global.client.dirConfig, JSON.stringify(global.GoatBot.config, null, 2));
-      return message.reply(getLang("successGlobal", newPrefix));
-    }
-    else {
-      await threadsData.set(event.threadID, newPrefix, "data.prefix");
-      return message.reply(getLang("successThisThread", newPrefix));
-    }
+    // This is an empty onStart function
   },
 
   onChat: async function ({ event, message, getLang }) {
