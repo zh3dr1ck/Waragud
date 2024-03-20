@@ -5,15 +5,19 @@ module.exports = {
 	config: {
 		name: "translate",
 		aliases: ["trans"],
-		version: "1.5",
+		version: "1.4",
 		author: "NTKhang",
 		countDown: 5,
 		role: 0,
-		description: {
+		shortDescription: {
+			vi: "Dịch văn bản",
+			en: "Translate text"
+		},
+		longDescription: {
 			vi: "Dịch văn bản sang ngôn ngữ mong muốn",
 			en: "Translate text to the desired language"
 		},
-		category: "utility",
+		category: "ai",
 		guide: {
 			vi: "   {pn} <văn bản>: Dịch văn bản sang ngôn ngữ của box chat bạn hoặc ngôn ngữ mặc định của bot"
 				+ "\n   {pn} <văn bản> -> <ISO 639-1>: Dịch văn bản sang ngôn ngữ mong muốn"
