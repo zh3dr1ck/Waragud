@@ -50,8 +50,21 @@ module.exports = {
           }
         } catch (secondError) {
           console.error('Second API Error:', secondError);
-          // If both API calls fail to fetch images, send a specific message
-          return api.sendMessage("(⁠  ⁠･ั⁠﹏⁠･ั⁠) can't fetch emails, api is dead.", event.threadID, event.messageID);
+          // If the second API call fails, attempt to fetch data from the third API
+          try {
+            if (command === 'inbox') {
+              const emailAddress = args[1];
+              const inboxResponse = await axios.get(`https://tempmail-api.codersensui.repl.co/api/getmessage/${emailAddress}`);
+              messages = inboxResponse.data.messages;
+            } else if (command === 'create') {
+              const tempMailResponse = await axios.get('https://tempmail-api.codersensui.repl.co/api/gen');
+              tempMailData = tempMailResponse.data;
+            }
+          } catch (thirdError) {
+            console.error('Third API Error:', thirdError);
+            // If all API calls fail to fetch data, send a specific error message
+            return api.sendMessage("(⁠  ⁠･ั⁠﹏⁠･ั⁠) can't fetch emails, all APIs are dead.", event.threadID, event.messageID);
+          }
         }
       }
 
