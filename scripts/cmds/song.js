@@ -6,7 +6,7 @@ const FILE_SIZE_LIMIT_MB = 25;
 
 module.exports = {
   config: {
-    name: "song", // Updated command name
+    name: "song",
     version: "1.0",
     author: "Coffee",
     countDown: 5,
@@ -15,11 +15,11 @@ module.exports = {
       en: "Play a song",
     },
     longDescription: {
-      en: "This command allows you to play a song. Usage: !song <song name>", // Updated usage description
+      en: "This command allows you to play a song. Usage: !song <song name>",
     },
     category: "music",
     guide: {
-      en: "{prefix}song <song name>", // Updated usage guide
+      en: "{prefix}song <song name>",
     },
   },
 
@@ -46,16 +46,12 @@ module.exports = {
       stream.pipe(fs.createWriteStream(filePath));
 
       stream.on('response', () => {
-        console.info('[DOWNLOADER]', 'Starting download now!');
       });
 
       stream.on('info', (info) => {
-        console.info('[DOWNLOADER]', `Downloading ${info.videoDetails.title} by ${info.videoDetails.author.name}`);
       });
 
       stream.on('end', async () => {
-        console.info('[DOWNLOADER] Downloaded');
-
         if (fs.statSync(filePath).size > FILE_SIZE_LIMIT_MB * 1024 * 1024) {
           fs.unlinkSync(filePath);
           return api.sendMessage(`[ERR] The file could not be sent because it is larger than ${FILE_SIZE_LIMIT_MB}MB.`, event.threadID, event.messageID);
@@ -67,7 +63,7 @@ module.exports = {
         };
         await api.sendMessage(replyMessage, event.threadID, () => {
           fs.unlinkSync(filePath);
-        });
+        }, event.messageID);
       });
     } catch (error) {
       console.error('[ERROR]', error);
