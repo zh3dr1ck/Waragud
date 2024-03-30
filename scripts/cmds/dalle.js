@@ -5,49 +5,49 @@ const KievRPSSecAuth = "FACCBBRaTOJILtFsMkpLVWSG6AN6C/svRwNmAAAEgAAACDJn3QvMvjPn
 const _U = "151APXZc-p_34dLclwdyPCofmXEQl-UcbiDZEGnpEdrhPBgGI-Te8KoDVUQdf4YEkxUmwp_FmkUndrbbGHvAFbQNt7kWCYqBrsbQi8BKJaXDllgUxMGhqaAKpDVZjJ9OxvxKASSO0LwWnj-iQwzys_dIJHIIHUgp2YLoC1O6FZWGBo_lanXb03sm9B1qFnlt9D88R3POvMtqTMgXygZXGMn3ybtXKsFMthGYQnGXNLa4";
 
 module.exports = {
-  config: {
-    name: "dalle",
-    version: "1.0.2",
-    author: "Samir Œ ",
-    role: 0,
-    countDown: 5,
-    description: { en: "bing dalle3 image generator" },
-    category: "image",
-    guide: { en: "{prefix}dalle <prompt>" }
-  },
+    config: {
+        name: "dalle",
+        version: "1.0.2",
+        author: "Samir Œ ",
+        role: 0,
+        countDown: 5,
+        description: { en: "bing dalle3 image generator" },
+        category: "image",
+        guide: { en: "{prefix}dalle <prompt>" }
+    },
 
-  onStart: async function ({ api, event, args }) {
-    const prompt = args.join(" ");
+    onStart: async function ({ api, event, args }) {
+        const prompt = args.join(" ");
 
-    try {
-      api.setMessageReaction("🕰️", event.messageID, () => { }, true);
+        try {
+            api.setMessageReaction("🕰", event.messageID, () => { }, true);
 
-      const res = await axios.get(`https://apis-dalle-gen.onrender.com/dalle3?auth_cookie_U=${_U}&auth_cookie_KievRPSSecAuth=${KievRPSSecAuth}&prompt=${encodeURIComponent(prompt)}`);
-      const data = res.data.results.images;
+            const res = await axios.get(`https://apis-dalle-gen.onrender.com/dalle3?auth_cookie_U=${_U}&auth_cookie_KievRPSSecAuth=${KievRPSSecAuth}&prompt=${encodeURIComponent(prompt)}`);
+            const data = res.data.results.images;
 
-      if (!data || data.length === 0) {
-        api.sendMessage("response received but imgurl are missing ", event.threadID, event.messageID);
-        return;
-      }
+            if (!data || data.length === 0) {
+                api.sendMessage("response received but imgurl are missing ", event.threadID, event.messageID);
+                return;
+            }
 
-      const imgData = [];
+            const imgData = [];
 
-      for (let i = 0; i < Math.min(4, data.length); i++) {
-        const imgResponse = await axios.get(data[i].url, { responseType: 'arraybuffer' });
-        const imgPath = path.join(__dirname, 'cache', `${i + 1}.jpg`);
-        await fs.outputFile(imgPath, imgResponse.data);
-        imgData.push(fs.createReadStream(imgPath));
-      }
+            for (let i = 0; i < Math.min(4, data.length); i++) {
+                const imgResponse = await axios.get(data[i].url, { responseType: 'arraybuffer' });
+                const imgPath = path.join(__dirname, 'cache', `${i + 1}.jpg`);
+                await fs.outputFile(imgPath, imgResponse.data);
+                imgData.push(fs.createReadStream(imgPath));
+            }
 
-      await api.sendMessage({
-        attachment: imgData,
-        body: `Here's your generated image`
-      }, event.threadID, event.messageID);
+            await api.sendMessage({
+                attachment: imgData,
+                body: `Here's your generated image`
+            }, event.threadID, event.messageID);
 
-      api.setMessageReaction("✅", event.messageID, () => { }, true);
-    } catch (error) {
-      api.setMessageReaction("❌", event.messageID, () => { }, true);
-      message.reply(`An error occurred: ${error}`, event.threadID, event.messageID);
+            api.setMessageReaction("✅", event.messageID, () => { }, true);
+        } catch (error) {
+            api.setMessageReaction("❌", event.messageID, () => { }, true);
+            api.sendMessage(`An error occurred: ${error}`, event.threadID);
+        }
     }
-  }
 };
