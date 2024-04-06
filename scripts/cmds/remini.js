@@ -43,7 +43,7 @@ module.exports = {
 
     api.sendMessage("⊂⁠(⁠・⁠﹏⁠・⁠⊂⁠) | Please wait...", threadID, async () => {
       try {
-        const response = await axios.get(`https://hazeyy-merge-apis-b924b22feb7b.herokuapp.com/api/try/remini?url=${encodeURIComponent(photoUrl)}`);
+        const response = await axios.get(`https://haze-code-merge-0f8f4bbdea12.herokuapp.com/api/try/remini?url=${encodeURIComponent(photoUrl)}`);
         const processedImageURL = response.data.image_data;
 
         // Fetch the processed image
