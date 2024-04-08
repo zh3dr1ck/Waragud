@@ -1,114 +1,222 @@
 const axios = require('axios');
 const fs = require('fs-extra');
 const path = require('path');
+const ytdl = require("ytdl-core");
+const yts = require("yt-search");
 
 async function lado(api, event, args, message) {
   try {
-    message.reply("🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n━━━━━━━━━━━━━━━━\nSorry, but this functionality has been disabled.\n━━━━━━━━━━━━━━━━");
+    const songName = args.join(" ");
+    const searchResults = await yts(songName);
+
+    if (!searchResults.videos.length) {
+      message.reply("No song found for the given query.");
+      return;
+    }
+
+    const video = searchResults.videos[0];
+    const videoUrl = video.url;
+    const stream = ytdl(videoUrl, { filter: "audioonly" });
+    const fileName = `music.mp3`; 
+    const filePath = path.join(__dirname, "tmp", fileName);
+
+    stream.pipe(fs.createWriteStream(filePath));
+
+    stream.on('response', () => {
+      console.info('[DOWNLOADER]', 'Starting download now!');
+    });
+
+    stream.on('info', (info) => {
+      console.info('[DOWNLOADER]', `Downloading ${info.videoDetails.title} by ${info.videoDetails.author.name}`);
+    });
+
+    stream.on('end', () => {
+      const audioStream = fs.createReadStream(filePath);
+      message.reply({ attachment: audioStream });
+      api.setMessageReaction("✅", event.messageID, () => {}, true);
+    });
   } catch (error) {
-    handleErrorMessage(error, message);
+    console.error("Error:", error);
+    message.reply("Sorry, an error occurred while processing your request.");
   }
 }
 
 async function kshitiz(api, event, args, message) {
   try {
-    message.reply("🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n━━━━━━━━━━━━━━━━\nSorry, but this functionality has been disabled.\n━━━━━━━━━━━━━━━━");
+    const query = args.join(" ");
+    const searchResults = await yts(query);
+
+    if (!searchResults.videos.length) {
+      message.reply("No videos found for the given query.");
+      return;
+    }
+
+    const video = searchResults.videos[0];
+    const videoUrl = video.url;
+    const stream = ytdl(videoUrl, { filter: "audioandvideo" }); 
+    const fileName = `music.mp4`;
+    const filePath = path.join(__dirname, "tmp", fileName);
+
+    stream.pipe(fs.createWriteStream(filePath));
+
+    stream.on('response', () => {
+      console.info('[DOWNLOADER]', 'Starting download now!');
+    });
+
+    stream.on('info', (info) => {
+      console.info('[DOWNLOADER]', `Downloading ${info.videoDetails.title} by ${info.videoDetails.author.name}`);
+    });
+
+    stream.on('end', () => {
+      const videoStream = fs.createReadStream(filePath);
+      message.reply({ attachment: videoStream });
+      api.setMessageReaction("✅", event.messageID, () => {}, true);
+    });
   } catch (error) {
-    handleErrorMessage(error, message);
+    console.error(error);
+    message.reply("Sorry, an error occurred while processing your request.");
   }
 }
 
-const config = {
-  name: "gpt",
-  aliases: ["chatgpt"],
-  version: "3.0",
-  author: "vex_kshitiz",
-  countDown: 5,
-  role: 0,
-  longDescription: "Chat with GPT-4",
-  category: "ai",
-  guide: {
-    en: "{p}gpt {prompt}"
-  }
-};
-
-async function getGPTResponse(prompt, uid) {
+async function b(c, d, e, f) {
   try {
-    const response = await axios.get(`https://ai-tools.replit.app/gpt?prompt=${encodeURIComponent(prompt)}&uid=${uid}&apikey=kshitiz`);
-    return response.data.gpt4;
-  } catch (error) {
-    throw new Error("Failed to fetch GPT response");
+    const g = await axios.get(`https://gpt-four.vercel.app/gpt?prompt=${encodeURIComponent(c)}&uid=${d}`);
+    const answer = g.data.answer;
+
+    // Add header and footer to the answer
+    const modifiedAnswer = `🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | 
+━━━━━━━━━━━━━━━━
+${answer}
+━━━━━━━━━━━━━━━━`;
+
+    return modifiedAnswer;
+  } catch (h) {
+    throw h;
   }
 }
 
-async function getImage(prompt) {
+async function i(c) {
   try {
-    const response = await axios.get(`https://ai-tools.replit.app/sdxl?prompt=${encodeURIComponent(prompt)}&styles=7`, { responseType: 'arraybuffer' });
-    return response.data;
-  } catch (error) {
-    throw new Error("Failed to fetch image");
+    const j = await axios.get(`https://sdxl-kshitiz.onrender.com/gen?prompt=${encodeURIComponent(c)}&style=3`);
+    return j.data.url;
+  } catch (k) {
+    throw k;
   }
 }
 
 async function describeImage(prompt, photoUrl) {
   try {
-    const response = await axios.get(`https://sandipbaruwal.onrender.com/gemini2?prompt=${encodeURIComponent(prompt)}&url=${encodeURIComponent(photoUrl)}`);
+    const url = `https://sandipbaruwal.onrender.com/gemini2?prompt=${encodeURIComponent(prompt)}&url=${encodeURIComponent(photoUrl)}`;
+    const response = await axios.get(url);
     return response.data.answer;
   } catch (error) {
-    throw new Error("Failed to describe image");
+    throw error;
   }
 }
 
-async function handleCommand({ api, message, event, args }) {
+async function l({ api, message, event, args }) {
   try {
-    const { senderID } = event;
-    const [command, ...commandArgs] = args.map(arg => arg.toLowerCase().trim());
-    
-    switch (command) {
-      case "draw":
-        await drawImage(message, commandArgs.join(" "));
-        break;
-      case "prompt":
-        if (event.messageReply && event.messageReply.attachments && event.messageReply.attachments.length > 0) {
-          const photoUrl = event.messageReply.attachments[0].url;
-          const description = await describeImage(commandArgs.join(" "), photoUrl);
-          message.reply(`🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n━━━━━━━━━━━━━━━━\nDescription: ${description}\n━━━━━━━━━━━━━━━━`);
-        } else {
-          message.reply("🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n━━━━━━━━━━━━━━━━\nPlease reply to an image to describe it.\n━━━━━━━━━━━━━━━━");
-        }
-        break;
-      default:
-        const gptResponse = await getGPTResponse(args.join(" "), senderID);
-        message.reply(`🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n━━━━━━━━━━━━━━━━\n${gptResponse}\n━━━━━━━━━━━━━━━━`);
-        break;
+    const m = event.senderID;
+    let n = "";
+    let draw = false;
+    let sendTikTok = false;
+    let sing = false;
+
+    if (args[0].toLowerCase() === "draw") {
+      draw = true;
+      n = args.slice(1).join(" ").trim();
+    } else if (args[0].toLowerCase() === "send") {
+      sendTikTok = true;
+      n = args.slice(1).join(" ").trim();
+    } else if (args[0].toLowerCase() === "sing") {
+      sing = true;
+      n = args.slice(1).join(" ").trim();
+    } else if (event.messageReply && event.messageReply.attachments && event.messageReply.attachments.length > 0) {
+      const photoUrl = event.messageReply.attachments[0].url;
+      n = args.join(" ").trim();
+      const description = await describeImage(n, photoUrl);
+      message.reply(`Description: ${description}`);
+      return;
+    } else {
+      n = args.join(" ").trim();
     }
-  } catch (error) {
-    handleErrorMessage(error, message);
+
+    if (!n) {
+      return message.reply("Please provide a prompt.");
+    }
+
+    if (draw) {
+      await drawImage(message, n);
+    } else if (sendTikTok) {
+      await kshitiz(api, event, args.slice(1), message); 
+    } else if (sing) {
+      await lado(api, event, args.slice(1), message); 
+    } else {
+      const q = await b(n, m);
+      message.reply(q, (r, s) => {
+        global.GoatBot.onReply.set(s.messageID, {
+          commandName: a.name,
+          uid: m 
+        });
+      });
+    }
+  } catch (t) {
+    console.error("Error:", t.message);
+    message.reply("An error occurred while processing the request.");
   }
 }
 
 async function drawImage(message, prompt) {
   try {
-    const image = await getImage(prompt);
-    const imagePath = path.join(__dirname, 'cache', `image_${Date.now()}.png`);
-    fs.writeFileSync(imagePath, image);
-    message.reply({
-      body: "🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n━━━━━━━━━━━━━━━━\nGenerated image:\n━━━━━━━━━━━━━━━━",
-      attachment: fs.createReadStream(imagePath)
+    const u = await i(prompt);
+
+    const v = path.join(__dirname, 'cache', `image_${Date.now()}.png`);
+    const writer = fs.createWriteStream(v);
+
+    const response = await axios({
+      url: u,
+      method: 'GET',
+      responseType: 'stream'
     });
-  } catch (error) {
-    handleErrorMessage(error, message);
+
+    response.data.pipe(writer);
+
+    return new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    }).then(() => {
+      message.reply({
+        body: "Generated image:",
+        attachment: fs.createReadStream(v)
+      });
+    });
+  } catch (w) {
+    console.error("Error:", w.message);
+    message.reply("An error occurred while processing the request.");
   }
 }
 
-function handleErrorMessage(error, message) {
-  console.error("Error:", error.message);
-  message.reply(`🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n━━━━━━━━━━━━━━━━\nAn error occurred while processing the request.\n━━━━━━━━━━━━━━━━`);
-}
+const a = {
+  name: "gpt",
+  aliases: ["chatgpt"],
+  version: "5.0",
+  author: "vex_kshitiz",
+  countDown: 5,
+  role: 0,
+  longDescription: "Chat with gpt",
+  category: "ai",
+  guide: {
+    en: "{p}gemini {prompt}"
+  }
+};
 
 module.exports = {
-  config,
-  handleCommand,
-  onStart: ({ api, message, event, args }) => handleCommand({ api, message, event, args }),
-  onReply: ({ api, message, event, args }) => handleCommand({ api, message, event, args })
+  config: a,
+  handleCommand: l,
+  onStart: function ({ api, message, event, args }) {
+    return l({ api, message, event, args });
+  },
+  onReply: function ({ api, message, event, args }) {
+    return l({ api, message, event, args });
+  }
 };
