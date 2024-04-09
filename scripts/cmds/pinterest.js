@@ -30,8 +30,6 @@ module.exports = {
       numberSearch = Math.min(Math.max(numberSearch, 1), 12); // Adjusted to ensure the range is between 1 and 12
 
       let imgData;
-
-      // Array to keep track of fetched image URLs
       let fetchedImageUrls = [];
 
       // Attempt to fetch images from the first API
@@ -41,10 +39,8 @@ module.exports = {
         if (Array.isArray(data) && data.length > 0) {
           imgData = await Promise.all(data.slice(0, numberSearch).map(async (item, i) => {
             const imageUrl = item;
-
-            // Check if the image URL has been fetched before
             if (!fetchedImageUrls.includes(imageUrl)) {
-              fetchedImageUrls.push(imageUrl); // Add the image URL to the fetched list
+              fetchedImageUrls.push(imageUrl);
 
               try {
                 const { data: imgBuffer } = await axios.get(imageUrl, { responseType: 'arraybuffer' });
@@ -53,10 +49,10 @@ module.exports = {
                 return fs.createReadStream(imgPath);
               } catch (error) {
                 console.error(error);
-                return null; // Skip problematic image
+                return null;
               }
             } else {
-              return null; // Skip duplicated image
+              return null;
             }
           }));
         }
@@ -72,10 +68,8 @@ module.exports = {
           if (Array.isArray(data) && data.length > 0) {
             imgData = await Promise.all(data.slice(0, numberSearch).map(async (item, i) => {
               const imageUrl = item.image;
-
-              // Check if the image URL has been fetched before
               if (!fetchedImageUrls.includes(imageUrl)) {
-                fetchedImageUrls.push(imageUrl); // Add the image URL to the fetched list
+                fetchedImageUrls.push(imageUrl);
 
                 try {
                   const { data: imgBuffer } = await axios.get(imageUrl, { responseType: 'arraybuffer' });
@@ -84,10 +78,10 @@ module.exports = {
                   return fs.createReadStream(imgPath);
                 } catch (error) {
                   console.error(error);
-                  return null; // Skip problematic image
+                  return null;
                 }
               } else {
-                return null; // Skip duplicated image
+                return null;
               }
             }));
           }
@@ -96,12 +90,41 @@ module.exports = {
         }
       }
 
+      // If still no images, try the third API
+      if (!imgData) {
+        try {
+          const { data } = await axios.get(`https://pin-kshitiz.vercel.app/pin?search=${encodeURIComponent(keySearchs)}`);
+
+          if (Array.isArray(data.result) && data.result.length > 0) {
+            imgData = await Promise.all(data.result.slice(0, numberSearch).map(async (imageUrl, i) => {
+              if (!fetchedImageUrls.includes(imageUrl)) {
+                fetchedImageUrls.push(imageUrl);
+
+                try {
+                  const { data: imgBuffer } = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+                  const imgPath = path.join(__dirname, 'tmp', `${i + 1}.jpg`);
+                  await fs.outputFile(imgPath, imgBuffer);
+                  return fs.createReadStream(imgPath);
+                } catch (error) {
+                  console.error(error);
+                  return null;
+                }
+              } else {
+                return null;
+              }
+            }));
+          }
+        } catch (error) {
+          console.error("Error fetching images from third API:", error);
+        }
+      }
+
       if (!imgData || imgData.length === 0) {
         throw new Error("No images found.");
       }
 
       await api.sendMessage({
-        attachment: imgData.filter(img => img !== null), // Filter out null (skipped) images
+        attachment: imgData.filter(img => img !== null),
         body: `Here are the top ${imgData.length} image results for "${keySearchs}":`
       }, event.threadID, event.messageID);
 
