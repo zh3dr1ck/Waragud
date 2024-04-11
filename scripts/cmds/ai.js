@@ -1,4 +1,4 @@
-const axios = require('axios');
+-cmd install ai.js const axios = require('axios');
 
 async function fetchFromAI(url, params) {
   try {
@@ -11,11 +11,14 @@ async function fetchFromAI(url, params) {
 }
 
 async function getAIResponse(input, userId, messageID) {
+  // If input is empty, default to "hi"
+  const query = input.trim() || "hi";
+
   const services = [
-    { url: 'https://ai-tools.replit.app/gpt', params: { prompt: input, uid: userId } },
-    { url: 'https://openaikey-x20f.onrender.com/api', params: { prompt: input } },
-    { url: 'http://fi3.bot-hosting.net:20265/api/gpt', params: { question: input } },
-    { url: 'https://ai-chat-gpt-4-lite.onrender.com/api/hercai', params: { question: input } }
+    { url: 'https://ai-tools.replit.app/gpt', params: { prompt: query, uid: userId } },
+    { url: 'https://openaikey-x20f.onrender.com/api', params: { prompt: query } },
+    { url: 'http://fi3.bot-hosting.net:20265/api/gpt', params: { question: query } },
+    { url: 'https://ai-chat-gpt-4-lite.onrender.com/api/hercai', params: { question: query } }
   ];
 
   let response = "Error: No response from AI services.";
@@ -44,12 +47,9 @@ module.exports = {
   },
   onStart: async function ({ api, event, args }) {
     const input = args.join(' ').trim();
-    if (!input) {
-      api.sendMessage(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\nPlease provide a question or statement.\n━━━━━━━━━━━━━━━━`, event.threadID, event.messageID);
-      return;
-    }
-
     const { response, messageID } = await getAIResponse(input, event.senderID, event.messageID);
+
+    // Send response to the user
     api.sendMessage(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, event.threadID, messageID);
   },
   onChat: async function ({ event, message }) {
@@ -57,6 +57,8 @@ module.exports = {
     if (messageContent.startsWith("ai")) {
       const input = messageContent.replace(/^ai\s*/, "").trim();
       const { response, messageID } = await getAIResponse(input, event.senderID, message.messageID);
+      
+      // Reply to the message with AI response
       message.reply(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, messageID);
     }
   }
