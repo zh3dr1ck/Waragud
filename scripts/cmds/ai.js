@@ -1,5 +1,51 @@
 const axios = require('axios');
 
+async function handleCommand(api, event, args, message) {
+  try {
+    const question = args.join(" ").trim();
+
+    if (!question) {
+      return message.reply("Please provide a question. Example: {p} cmdName {your question}");
+    }
+
+    const response = await getAnswerFromAI(question);
+
+    if (response && response.answer) {
+      message.reply(response.answer);
+    } else {
+      message.reply("Failed to retrieve an answer. Please try again later.");
+    }
+  } catch (error) {
+    console.error("Error occurred:", error.message);
+    message.reply("An error occurred while processing your request.");
+  }
+}
+
+async function getAnswerFromAI(question) {
+  try {
+    const url = 'https://personal-ai-phi.vercel.app/kshitiz';
+    const params = {
+      prompt: question,
+      content: "This AI assistant is designed to provide answers concisely and fluently.",
+      max_tokens: 50,
+      temperature: 0.5,
+      top_p: 1
+    };
+
+    const { data } = await axios.get(url, { params });
+
+    if (data && data.code === 2 && data.message === "success") {
+      const answer = data.answer.trim();
+      return { answer };
+    } else {
+      throw new Error("No valid response from AI");
+    }
+  } catch (error) {
+    console.error("AI Error:", error.message);
+    throw new Error("Failed to retrieve AI response");
+  }
+}
+
 async function fetchFromAI(url, params) {
   try {
     const response = await axios.get(url, { params });
@@ -11,14 +57,14 @@ async function fetchFromAI(url, params) {
 }
 
 async function getAIResponse(input, userId, messageID) {
-  // If input is empty, default to "hi"
   const query = input.trim() || "hi";
 
   const services = [
     { url: 'https://ai-tools.replit.app/gpt', params: { prompt: query, uid: userId } },
     { url: 'https://openaikey-x20f.onrender.com/api', params: { prompt: query } },
     { url: 'http://fi3.bot-hosting.net:20265/api/gpt', params: { question: query } },
-    { url: 'https://ai-chat-gpt-4-lite.onrender.com/api/hercai', params: { question: query } }
+    { url: 'https://ai-chat-gpt-4-lite.onrender.com/api/hercai', params: { question: query } },
+    { url: 'https://personal-ai-phi.vercel.app/kshitiz', params: { prompt: query } } // New AI service
   ];
 
   let response = "Error: No response from AI services.";
@@ -27,8 +73,8 @@ async function getAIResponse(input, userId, messageID) {
   for (let i = 0; i < services.length; i++) {
     const service = services[currentIndex];
     const data = await fetchFromAI(service.url, service.params);
-    if (data && (data.gpt4 || data.reply || data.response)) {
-      response = data.gpt4 || data.reply || data.response;
+    if (data && (data.gpt4 || data.reply || data.response || data.answer)) {
+      response = data.gpt4 || data.reply || data.response || data.answer;
       break;
     }
     currentIndex = (currentIndex + 1) % services.length; // Move to the next service in the cycle
