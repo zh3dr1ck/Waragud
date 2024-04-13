@@ -65,7 +65,8 @@ async function getAIResponse(input, userId, messageID) {
     { url: 'http://fi3.bot-hosting.net:20265/api/gpt', params: { question: query } },
     { url: 'https://ai-chat-gpt-4-lite.onrender.com/api/hercai', params: { question: query } },
     { url: 'https://personal-ai-phi.vercel.app/kshitiz', params: { prompt: query } },
-    { url: 'https://lianeapi.onrender.com/@hercai/api/Herc.ai?key=j86bwkwo-8hako-12C', params: { query: query } } // New AI service
+    { url: 'https://lianeapi.onrender.com/@hercai/api/Herc.ai?key=j86bwkwo-8hako-12C', params: { query: query } },
+    { url: 'https://sandipapi.onrender.com/gpt', params: { prompt: query } } // New AI service
   ];
 
   let response = "Error: No response from AI services.";
@@ -96,7 +97,6 @@ module.exports = {
     const input = args.join(' ').trim();
     const { response, messageID } = await getAIResponse(input, event.senderID, event.messageID);
 
-    // Send response to the user
     api.sendMessage(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, event.threadID, messageID);
   },
   onChat: async function ({ event, message }) {
@@ -105,7 +105,6 @@ module.exports = {
       const input = messageContent.replace(/^ai\s*/, "").trim();
       const { response, messageID } = await getAIResponse(input, event.senderID, message.messageID);
       
-      // Reply to the message with AI response
       message.reply(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, messageID);
     }
   }
