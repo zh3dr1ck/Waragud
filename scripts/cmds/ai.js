@@ -64,7 +64,8 @@ async function getAIResponse(input, userId, messageID) {
     { url: 'https://openaikey-x20f.onrender.com/api', params: { prompt: query } },
     { url: 'http://fi3.bot-hosting.net:20265/api/gpt', params: { question: query } },
     { url: 'https://ai-chat-gpt-4-lite.onrender.com/api/hercai', params: { question: query } },
-    { url: 'https://personal-ai-phi.vercel.app/kshitiz', params: { prompt: query } } // New AI service
+    { url: 'https://personal-ai-phi.vercel.app/kshitiz', params: { prompt: query } },
+    { url: 'https://lianeapi.onrender.com/@hercai/api/Herc.ai?key=j86bwkwo-8hako-12C', params: { query: query } } // New AI service
   ];
 
   let response = "Error: No response from AI services.";
@@ -73,8 +74,8 @@ async function getAIResponse(input, userId, messageID) {
   for (let i = 0; i < services.length; i++) {
     const service = services[currentIndex];
     const data = await fetchFromAI(service.url, service.params);
-    if (data && (data.gpt4 || data.reply || data.response || data.answer)) {
-      response = data.gpt4 || data.reply || data.response || data.answer;
+    if (data && (data.gpt4 || data.reply || data.response || data.answer || data.message)) {
+      response = data.gpt4 || data.reply || data.response || data.answer || data.message;
       break;
     }
     currentIndex = (currentIndex + 1) % services.length; // Move to the next service in the cycle
