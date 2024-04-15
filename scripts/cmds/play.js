@@ -84,7 +84,7 @@ async function handleLyrics(api, event, video, filePath, songName, messageID) { 
     });
   } catch (error) {
     console.error('[ERROR]', error);
-    api.sendMessage(`Error getting lyrics for "${songName}"!`, event.threadID);
+    api.sendMessage(`Can't fetch music for "${songName}"!`, event.threadID);
   }
 }
 
