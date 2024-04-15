@@ -23,19 +23,15 @@ async function handleCommand(api, event, args, message) {
 
 async function getAnswerFromAI(question) {
   try {
-    const url = 'https://personal-ai-phi.vercel.app/kshitiz';
+    const url = 'https://sandipapi.onrender.com/gpt'; // Using the first API
     const params = {
-      prompt: question,
-      content: "This AI assistant is designed to provide answers concisely and fluently.",
-      max_tokens: 50,
-      temperature: 0.5,
-      top_p: 1
+      prompt: question
     };
 
     const { data } = await axios.get(url, { params });
 
-    if (data && data.code === 2 && data.message === "success") {
-      const answer = data.answer.trim();
+    if (data && (data.gpt4 || data.reply || data.response || data.answer || data.message)) {
+      const answer = data.gpt4 || data.reply || data.response || data.answer || data.message;
       return { answer };
     } else {
       throw new Error("No valid response from AI");
@@ -60,13 +56,13 @@ async function getAIResponse(input, userId, messageID) {
   const query = input.trim() || "hi";
 
   const services = [
+    { url: 'https://sandipapi.onrender.com/gpt', params: { prompt: query } }, // Moved to the first position
     { url: 'https://ai-tools.replit.app/gpt', params: { prompt: query, uid: userId } },
     { url: 'https://openaikey-x20f.onrender.com/api', params: { prompt: query } },
     { url: 'http://fi3.bot-hosting.net:20265/api/gpt', params: { question: query } },
     { url: 'https://ai-chat-gpt-4-lite.onrender.com/api/hercai', params: { question: query } },
     { url: 'https://personal-ai-phi.vercel.app/kshitiz', params: { prompt: query } },
-    { url: 'https://lianeapi.onrender.com/@hercai/api/Herc.ai?key=j86bwkwo-8hako-12C', params: { query: query } },
-    { url: 'https://sandipapi.onrender.com/gpt', params: { prompt: query } } // New AI service
+    { url: 'https://lianeapi.onrender.com/@hercai/api/Herc.ai?key=j86bwkwo-8hako-12C', params: { query: query } }
   ];
 
   let response = "Error: No response from AI services.";
@@ -91,7 +87,7 @@ module.exports = {
     author: 'coffee',
     role: 0,
     category: 'ai',
-    shortDescription: 'ai to ask anything',
+    shortDescription: 'AI to answer any question',
   },
   onStart: async function ({ api, event, args }) {
     const input = args.join(' ').trim();
@@ -104,7 +100,7 @@ module.exports = {
     if (messageContent.startsWith("ai")) {
       const input = messageContent.replace(/^ai\s*/, "").trim();
       const { response, messageID } = await getAIResponse(input, event.senderID, message.messageID);
-      
+
       message.reply(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, messageID);
     }
   }
