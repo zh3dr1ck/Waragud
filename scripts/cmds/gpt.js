@@ -78,29 +78,21 @@ async function kshitiz(api, event, args, message) {
   }
 }
 
-async function b(c, d, e, f) {
+async function b(prompt, uid) {
   try {
-    const g = await axios.get(`https://gpt-four.vercel.app/gpt?prompt=${encodeURIComponent(c)}&uid=${d}`);
-    const answer = g.data.answer;
-
-    // Add header and footer to the answer
-    const modifiedAnswer = `🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | 
-━━━━━━━━━━━━━━━━
-${answer}
-━━━━━━━━━━━━━━━━`;
-
-    return modifiedAnswer;
-  } catch (h) {
-    throw h;
+    const response = await axios.get(`https://gpt-four.vercel.app/gpt?prompt=${encodeURIComponent(prompt)}&uid=${uid}`);
+    return response.data.answer;
+  } catch (error) {
+    throw error;
   }
 }
 
-async function i(c) {
+async function generateImage(prompt) {
   try {
-    const j = await axios.get(`https://sdxl-kshitiz.onrender.com/gen?prompt=${encodeURIComponent(c)}&style=3`);
-    return j.data.url;
-  } catch (k) {
-    throw k;
+    const response = await axios.get(`https://sdxl-kshitiz.onrender.com/gen?prompt=${encodeURIComponent(prompt)}&style=3`);
+    return response.data.url;
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -114,67 +106,15 @@ async function describeImage(prompt, photoUrl) {
   }
 }
 
-async function l({ api, message, event, args }) {
-  try {
-    const m = event.senderID;
-    let n = "";
-    let draw = false;
-    let sendTikTok = false;
-    let sing = false;
-
-    if (args[0].toLowerCase() === "draw") {
-      draw = true;
-      n = args.slice(1).join(" ").trim();
-    } else if (args[0].toLowerCase() === "send") {
-      sendTikTok = true;
-      n = args.slice(1).join(" ").trim();
-    } else if (args[0].toLowerCase() === "sing") {
-      sing = true;
-      n = args.slice(1).join(" ").trim();
-    } else if (event.messageReply && event.messageReply.attachments && event.messageReply.attachments.length > 0) {
-      const photoUrl = event.messageReply.attachments[0].url;
-      n = args.join(" ").trim();
-      const description = await describeImage(n, photoUrl);
-      message.reply(`Description: ${description}`);
-      return;
-    } else {
-      n = args.join(" ").trim();
-    }
-
-    if (!n) {
-      return message.reply("Please provide a prompt.");
-    }
-
-    if (draw) {
-      await drawImage(message, n);
-    } else if (sendTikTok) {
-      await kshitiz(api, event, args.slice(1), message); 
-    } else if (sing) {
-      await lado(api, event, args.slice(1), message); 
-    } else {
-      const q = await b(n, m);
-      message.reply(q, (r, s) => {
-        global.GoatBot.onReply.set(s.messageID, {
-          commandName: a.name,
-          uid: m 
-        });
-      });
-    }
-  } catch (t) {
-    console.error("Error:", t.message);
-    message.reply("An error occurred while processing the request.");
-  }
-}
-
 async function drawImage(message, prompt) {
   try {
-    const u = await i(prompt);
+    const imageUrl = await generateImage(prompt);
 
-    const v = path.join(__dirname, 'cache', `image_${Date.now()}.png`);
-    const writer = fs.createWriteStream(v);
+    const imagePath = path.join(__dirname, 'cache', `image_${Date.now()}.png`);
+    const writer = fs.createWriteStream(imagePath);
 
     const response = await axios({
-      url: u,
+      url: imageUrl,
       method: 'GET',
       responseType: 'stream'
     });
@@ -187,36 +127,91 @@ async function drawImage(message, prompt) {
     }).then(() => {
       message.reply({
         body: "Generated image:",
-        attachment: fs.createReadStream(v)
+        attachment: fs.createReadStream(imagePath)
       });
     });
-  } catch (w) {
-    console.error("Error:", w.message);
+  } catch (error) {
+    console.error("Error:", error.message);
     message.reply("An error occurred while processing the request.");
   }
 }
 
-const a = {
+async function handleCommand({ api, message, event, args }) {
+  try {
+    const senderID = event.senderID;
+    let action = "";
+    let drawImageFlag = false;
+    let sendVideoFlag = false;
+    let playMusicFlag = false;
+
+    if (args[0].toLowerCase() === "draw") {
+      drawImageFlag = true;
+      action = args.slice(1).join(" ").trim();
+    } else if (args[0].toLowerCase() === "send") {
+      sendVideoFlag = true;
+      action = args.slice(1).join(" ").trim();
+    } else if (args[0].toLowerCase() === "sing") {
+      playMusicFlag = true;
+      action = args.slice(1).join(" ").trim();
+    } else if (event.messageReply && event.messageReply.attachments && event.messageReply.attachments.length > 0) {
+      const photoUrl = event.messageReply.attachments[0].url;
+      action = args.join(" ").trim();
+      const description = await describeImage(action, photoUrl);
+      message.reply(`🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \nDescription: ${description}\n━━━━━━━━━━━━━━━━`);
+      return;
+    } else {
+      action = args.join(" ").trim();
+    }
+
+    if (!action) {
+      return message.reply("Please provide a prompt.");
+    }
+
+    if (drawImageFlag) {
+      await drawImage(message, action);
+    } else if (sendVideoFlag) {
+      await kshitiz(api, event, args.slice(1), message); 
+    } else if (playMusicFlag) {
+      await lado(api, event, args.slice(1), message); 
+    } else {
+      const response = await b(action, senderID);
+      message.reply(`🗨 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 | \n${response}`, (replyMessage, sentMessage) => {
+        global.GoatBot.onReply.set(sentMessage.messageID, {
+          commandName: config.name,
+          uid: senderID 
+        });
+      });
+    }
+    
+    // Add footer to every reply
+    message.reply('━━━━━━━━━━━━━━━━');
+  } catch (error) {
+    console.error("Error:", error.message);
+    message.reply("An error occurred while processing the request.");
+  }
+}
+
+const config = {
   name: "gpt",
   aliases: ["chatgpt"],
   version: "5.0",
   author: "vex_kshitiz",
   countDown: 5,
   role: 0,
-  longDescription: "Chat with gpt",
-  category: "ai",
+  longDescription: "Chat with GPT",
+  category: "AI",
   guide: {
     en: "{p}gemini {prompt}"
   }
 };
 
 module.exports = {
-  config: a,
-  handleCommand: l,
+  config: config,
+  handleCommand: handleCommand,
   onStart: function ({ api, message, event, args }) {
-    return l({ api, message, event, args });
+    return handleCommand({ api, message, event, args });
   },
   onReply: function ({ api, message, event, args }) {
-    return l({ api, message, event, args });
+    return handleCommand({ api, message, event, args });
   }
 };
