@@ -275,6 +275,7 @@ module.exports = {
 │ - Uid
 │ - Unsend
 │ - Uptime
+│ - Weather 
 ╰─━━━━━━━━━╾─╯
 ╭─╼━━━━━━━━╾─╮
 │  👑 | 𝙱𝚘𝚝 𝙾𝚠𝚗𝚎𝚛
@@ -283,12 +284,21 @@ module.exports = {
 │ - Delete
 │ - Kick
 │ - Leave
-│ - Restart 
+│ - Restart
+│ - Bio
+│ - Ngl
+│ - Hack
+│ - Obfuscate 
+│ - Fbpost
+│ - Pending
+│ - File
 ╰─━━━━━━━━━╾─╯
 -𝚑𝚎𝚕𝚙 <𝚌𝚘𝚖𝚖𝚊𝚗𝚍 𝚗𝚊𝚖𝚎>
 𝚃𝚘 𝚜𝚎𝚎 𝚑𝚘𝚠 𝚝𝚘 𝚞𝚜𝚎 𝚝𝚑𝚎 𝚌𝚘𝚖𝚖𝚊𝚗𝚍𝚜
 
 Example: -help bard
+
+𝗢𝘄𝗻𝗲𝗿: https://www.facebook.com/incognitotab.dev
 ━━━━━━━━━━━━━━━━`;
 
       return message.reply(commandsList);
