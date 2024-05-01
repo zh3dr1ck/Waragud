@@ -1,79 +1,106 @@
 const axios = require('axios');
 
-const Prefixes = [
-  'gpt',
-  'ai',
-  'what',
-  '/ai',
-];
+async function handleCommand(api, event, args, message) {
+  try {
+    const question = args.join(" ").trim();
+
+    if (!question) {
+      return message.reply("Please provide a question. Example: {p} cmdName {your question}");
+    }
+
+    const response = await getAnswerFromAI(question);
+
+    if (response && response.answer) {
+      message.reply(response.answer);
+    } else {
+      message.reply("Failed to get an answer. Please try again later.");
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+    message.reply("An error occurred while processing your request.");
+  }
+}
+
+async function getAnswerFromAI(question) {
+  try {
+    const url = 'https://sandipapi.onrender.com/gpt';
+    const params = { prompt: question };
+    const { data } = await axios.get(url, { params });
+
+    if (data && (data.gpt4 || data.reply || data.response || data.answer || data.message)) {
+      const answer = data.gpt4 || data.reply || data.response || data.answer || data.message;
+      console.log("AI Response:", answer);
+      return { answer };
+    } else {
+      throw new Error("No valid response from AI");
+    }
+  } catch (error) {
+    console.error("AI Error:", error.message);
+    throw new Error("Failed to get AI response");
+  }
+}
+
+async function fetchFromAI(url, params) {
+  try {
+    const response = await axios.get(url, { params });
+    return response.data;
+  } catch (error) {
+    console.error("Network Error:", error.message);
+    return null;
+  }
+}
+
+async function getAIResponse(input, userId, messageID) {
+  const query = input.trim() || "hi";
+  const services = [
+    { url: 'https://sandipapi.onrender.com/gpt', params: { prompt: query } },
+    { url: 'https://ai-tools.replit.app/gpt', params: { prompt: query, uid: userId } },
+    { url: 'https://openaikey-x20f.onrender.com/api', params: { prompt: query } },
+    { url: 'http://fi3.bot-hosting.net:20265/api/gpt', params: { question: query } },
+    { url: 'https://ai-chat-gpt-4-lite.onrender.com/api/hercai', params: { question: query } },
+    { url: 'https://personal-ai-phi.vercel.app/kshitiz', params: { prompt: query } },
+    { url: 'https://lianeapi.onrender.com/@hercai/api/Herc.ai?key=j86bwkwo-8hako-12C', params: { query: query } },
+    { url: 'https://ai-technology.onrender.com/api/chatgpt', params: { prompt: query } },
+    { url: 'https://gpt-four.vercel.app/gpt', params: { prompt: query, uid: userId } } // New AI service
+    // Add more AI services here...
+  ];
+
+  let response = "Error: No response from AI services.";
+
+  for (const service of services) {
+    const data = await fetchFromAI(service.url, service.params);
+
+    if (data && (data.gpt4 || data.reply || data.response || data.answer || data.message)) {
+      response = data.gpt4 || data.reply || data.response || data.answer || data.message;
+      break;
+    }
+  }
+
+  return { response, messageID };
+}
 
 module.exports = {
-  config: {
-    name: 'ai',
-    version: '2.5.4',
-    author: 'sharleyy',//credits owner of this api
-    role: 0,
-    category: 'ai',
-    shortDescription: {
-      en: 'Asks an AI for an answer.',
-    },
-    longDescription: {
-      en: 'Asks an AI for an answer based on the user prompt.',
-    },
-    guide: {
-      en: '{pn} [prompt]',
-    },
-  },
+  config: {
+    name: 'ai',
+    author: 'Charlie',
+    role: 0,
+    category: 'ai',
+    shortDescription: 'AI to answer any question',
+  },
+  onStart: async function ({ api, event, args }) {
+    const input = args.join(' ').trim();
+    const { response, messageID } = await getAIResponse(input, event.senderID, event.messageID);
 
-  langs: {
-    en: {
-      final: "🤖 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 |",
-      loading: "🤖 | 𝙲𝚑𝚊𝚝𝙶𝙿𝚃 |\n━━━━━━━━━━━━━━━\n⏳ | 𝙋𝙡𝙚𝙖𝙨𝙚 𝙬𝙖𝙞𝙩......\n━━━━━━━━━━━━━━━\n"
+    api.sendMessage(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, event.threadID, messageID);
+  },
+  onChat: async function ({ event, message }) {
+    const messageContent = event.body.trim().toLowerCase();
+    if (messageContent.startsWith("ai")) {
+      const input = messageContent.replace(/^ai\s*/, "").trim();
+      const { response, messageID } = await getAIResponse(input, event.senderID, message.messageID);
+
+      message.reply(`🧋✨ | 𝙼𝚘𝚌𝚑𝚊 𝙰𝚒\n━━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━━`, messageID);
     }
-  },
-
-  onStart: async function () {},
-
-  onChat: async function ({ api, event, args, getLang, message }) {
-    try {
-      const prefix = Prefixes.find((p) => event.body && event.body.toLowerCase().startsWith(p));
-
-      if (!prefix) {
-        return;
-      }
-
-      const prompt = event.body.substring(prefix.length).trim();
-
-      if (prompt === '') {
-
-        await message.reply(
-          "Kindly provide the question at your convenience and I shall strive to deliver an effective response. Your satisfaction is my top priority."
-        );
-        
-        return;
-      }
-
-      const loadingMessage = getLang("loading");
-      const loadingReply = await message.reply(loadingMessage);
-      const url = "https://hercai.onrender.com/v3/hercai"; // Replace with the new API endpoint
-      const response = await axios.get(`${url}?question=${encodeURIComponent(prompt)}`);
-
-      if (response.status !== 200 || !response.data) {
-        throw new Error('Invalid or missing response from API');
-      }
-
-      const messageText = response.data.reply.trim(); // Adjust according to the response structure of the new API
-      const userName = getLang("final");
-      const finalMsg = `${userName}\n━━━━━━━━━━━━━━━\n${messageText}\n━━━━━━━━━━━━━━━\n`;
-      api.editMessage(finalMsg, loadingReply.messageID);
-
-      console.log('Sent answer as a reply to user');
-    } catch (error) {
-      console.error(`Failed to get answer: ${error.message}`);
-      api.sendMessage(
-        `${error.message}.\n\nYou can try typing your question again or resending it, as there might be a bug from the server that's causing the problem. It might resolve the issue.`,
-        event.threadID
-      );
-    }
-  },
+  },
+  handleCommand // Export the handleCommand function for command-based interactions
 };
