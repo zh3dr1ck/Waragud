@@ -217,6 +217,7 @@ function buildAPI(globalOptions, html, jar) {
 		'unsendMessage',
 		'unfriend',
 		'editMessage',
+		'shareContact',
 
 		// HTTP
 		'httpGet',
