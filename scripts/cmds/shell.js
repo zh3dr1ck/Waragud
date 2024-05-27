@@ -15,7 +15,7 @@ module.exports = {
   },
 
   onStart: async function ({ args, message, api, event }) {
-const god = ["100005954550355"];
+const god = ["61550011623347"];
   if (!god.includes(event.senderID)) 
 return api.sendMessage("You don't have enough permission to use this command.", event.threadID, event.messageID);
     const command = args.join(" ");
