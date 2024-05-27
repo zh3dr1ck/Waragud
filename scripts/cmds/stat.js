@@ -15,17 +15,8 @@ module.exports = {
       en: "Use {p}info"
   
   },
-    lang: {
-      en: {
-        loading: "⏳loading......."
-      }
-    }
   },
-  onStart: async function ({ message, getLang, api,event }) {
-   const loadingMessage = getLang("loading");
-   const loadingReply = await message.reply(loadingMessage); 
-
-  
+  onStart: async function ({ message, api,event }) {
     const uptime = process.uptime();
     const formattedUptime = formatMilliseconds(uptime * 1000);
 
